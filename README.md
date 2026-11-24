@@ -31,6 +31,8 @@ A portfolio site styled as a custom desktop operating system. It uses plain HTML
 3. Save your resume as `assets/resume.pdf`.
 4. Optional: add `video: "https://www.youtube.com/watch?v=VIDEO_ID"` to a project to show a clip in place of the cover. Any YouTube link format works, and it's embedded in privacy-enhanced mode (youtube-nocookie.com).
 
+   Videos are **click-to-load**, which is the site's cookie consent: the project's cover shows with a play button and a note that the video plays from YouTube, and nothing is fetched from YouTube until the visitor clicks Play. After one click, other videos load straight away until the tab is closed. That's why the site needs no cookie banner. If you ever add analytics or another service that sets cookies, you'd need to ask for consent before it loads.
+
 ## Previewing locally
 
 Open `index.html` in a browser, or run a small local server from this folder:

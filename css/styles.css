@@ -321,6 +321,31 @@ img { max-width: 100%; }
 .detail-cover { border-radius: var(--r-md); margin-bottom: 24px; border: 1px solid var(--line); }
 .detail-cover .cover-initial { font-size: 120px; left: 24px; bottom: 16px; }
 .video { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: var(--r-md); margin-bottom: 24px; background: #000; }
+
+/* Click-to-load video: the project's cover with a play button until clicked */
+.video-gate { margin-bottom: 24px; }
+.video-gate-stage {
+  position: relative; aspect-ratio: 16 / 9; overflow: hidden;
+  border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface-2);
+}
+.video-gate-cover { position: absolute; inset: 0; aspect-ratio: auto; height: 100%; }
+.video-gate-cover .cover-initial { font-size: 120px; left: 24px; bottom: 16px; }
+.video-play {
+  position: absolute; top: 50%; left: 50%; width: 72px; height: 72px; margin: -36px 0 0 -36px;
+  display: grid; place-items: center; border: 0; border-radius: 50%; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+  transition: transform .15s ease, filter .15s ease;
+}
+.video-play svg { width: 30px; height: 30px; margin-left: 3px; }
+.video-play:hover { transform: scale(1.06); filter: brightness(1.08); }
+.video-play:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+.video-note { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
+.video-note button {
+  padding: 0; border: 0; background: none; font: inherit; color: var(--accent-text);
+  text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
+.no-motion .video-play { transition: none; }
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
 .gallery img { display: block; width: 100%; border-radius: var(--r-sm); border: 1px solid var(--line); }
 
@@ -405,6 +430,7 @@ img { max-width: 100%; }
   .window-body { padding: 22px 20px calc(32px + env(safe-area-inset-bottom)); }
   .win-h { font-size: 26px; }
   .detail-cover .cover-initial { font-size: 80px; }
+  .video-gate-cover .cover-initial { font-size: 64px; left: 16px; bottom: 10px; }
 }
 
 /* ============ Plain view ============ */

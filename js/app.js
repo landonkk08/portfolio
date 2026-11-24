@@ -33,7 +33,8 @@
     back: '<path d="M15 5l-7 7 7 7"/>',
     next: '<path d="M9 5l7 7-7 7"/>',
     external: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
-    download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>'
+    download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+    play: '<path d="M8 5.5v13l10.5-6.5z" fill="currentColor" stroke="none"/>'
   };
   const svg = (name) =>
     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PATHS[name] || ""}</svg>`;
@@ -350,11 +351,53 @@
     return m ? `https://www.youtube-nocookie.com/embed/${m[1]}` : url;
   }
 
+  // Click-to-load videos: nothing is fetched from YouTube (or another video
+  // host) until the visitor presses Play. After that, other videos load
+  // straight away until the tab is closed (sessionStorage, nothing kept after).
+  const VIDEO_OK = "videos-allowed";
+  const videosAllowed = () => { try { return sessionStorage.getItem(VIDEO_OK) === "1"; } catch (_) { return false; } };
+
+  function videoFrame(src, title, autoplay) {
+    const url = autoplay ? src + (src.includes("?") ? "&" : "?") + "autoplay=1" : src;
+    return `<iframe class="video" src="${esc(url)}" title="${esc(title)} video" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+  }
+
+  function videoHost(src) {
+    try {
+      const host = new URL(src).hostname.replace(/^www\./, "");
+      return /youtube(-nocookie)?\.com$/.test(host) ? "YouTube" : host;
+    } catch (_) { return "another site"; }
+  }
+
+  function videoMedia(p) {
+    const src = videoEmbed(p.video);
+    if (videosAllowed()) return videoFrame(src, p.title, false);
+    const host = videoHost(src);
+    return `<div class="video-gate" data-src="${esc(src)}" data-title="${esc(p.title)}">
+        <div class="video-gate-stage">
+          ${cover(p, "video-gate-cover")}
+          <button class="video-play" type="button" aria-label="Play ${esc(p.title)} video (loads from ${esc(host)})">${svg("play")}</button>
+        </div>
+        <p class="video-note">Plays from ${esc(host)}, which may store cookies. <button type="button" data-open="privacy">Privacy policy</button></p>
+      </div>`;
+  }
+
+  // Swap every waiting cover on the page for its video; only the one that
+  // was clicked starts playing.
+  function loadVideos(clicked) {
+    try { sessionStorage.setItem(VIDEO_OK, "1"); } catch (_) { /* storage blocked: just this one */ }
+    $$(".video-gate").forEach((gate) => {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = videoFrame(gate.dataset.src, gate.dataset.title, gate === clicked);
+      const frame = wrap.firstElementChild;
+      gate.replaceWith(frame);
+      if (gate === clicked) frame.focus();
+    });
+  }
+
   function renderProject(body, p) {
     const meta = [["Role", p.role], ["Year", p.year], ["Category", catLabel(p.category)]].filter(([, v]) => v);
-    const media = p.video
-      ? `<iframe class="video" src="${esc(videoEmbed(p.video))}" title="${esc(p.title)} video" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>`
-      : cover(p, "detail-cover");
+    const media = p.video ? videoMedia(p) : cover(p, "detail-cover");
     body.innerHTML = `
       <p class="eyebrow">${esc(catLabel(p.category))} · ${esc(p.year)}</p>
       <h2 class="win-h">${esc(p.title)}</h2>
@@ -370,6 +413,8 @@
     body.addEventListener("click", (e) => {
       const shot = e.target.closest("[data-shot]");
       if (shot) viewer.open(p.gallery, +shot.dataset.shot, p.title);
+      const play = e.target.closest(".video-play");
+      if (play) loadVideos(play.closest(".video-gate"));
     });
   }
 

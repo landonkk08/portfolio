@@ -31,7 +31,8 @@
         <p>To remember your choices, the site saves a few small settings <strong>in your own browser</strong>. They are never sent to me or anyone else:</p>
         <ul>
           <li><strong>Your Settings</strong> (theme, accent color, wallpaper, motion and sounds) are kept in your browser's local storage until you clear them.</li>
-          <li><strong>A note that the start-up animation has played</strong> is kept in session storage, so it doesn't replay on every page. It's deleted when you close the tab.</li>
+          <li><strong>A note that the start-up animation has played</strong> is kept in session storage, so it doesn't replay on every page. It's deleted when you close the tab.</li>${hasVideo ? `
+          <li><strong>A note that you chose to play a video</strong> is kept in session storage, so other videos load without asking again. It's deleted when you close the tab.</li>` : ""}
         </ul>
         <p>To remove them, use <em>Settings → Reset to defaults</em> or clear this site's data in your browser.</p>`)}
 
@@ -40,7 +41,8 @@
         <p>Fonts, images and code are all served from this site; no other font or content services are used.</p>`)}
 
       ${hasVideo ? sec("Embedded videos", `
-        <p>Some projects include a YouTube video. These use YouTube's privacy-enhanced mode (youtube-nocookie.com). YouTube receives your IP address when the player loads and may store information in your browser once you play a video. See ${ext("https://policies.google.com/privacy", "Google's Privacy Policy")}.</p>`) : ""}
+        <p>Some projects include a YouTube video. <strong>Nothing is loaded from YouTube until you press Play</strong>; until then you see the project's own cover image. After you press Play, other videos load straight away until you close the tab.</p>
+        <p>Videos use YouTube's privacy-enhanced mode (youtube-nocookie.com). Once a video loads, YouTube receives your IP address and may store information in your browser. See ${ext("https://policies.google.com/privacy", "Google's Privacy Policy")}.</p>`) : ""}
 
       ${sec("Links to other sites", `
         <p>Links to other sites, such as GitHub, LinkedIn or game platforms, are covered by those sites' own privacy policies once you follow them.</p>`)}
