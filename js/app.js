@@ -7,7 +7,8 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => (
     { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const S = window.OS_SETTINGS;
+  const sound = (name) => window.OS_SOUND.play(name);
   const phone = matchMedia("(max-width: 767px)");
 
   /* ---------- Icons ---------- */
@@ -17,6 +18,7 @@
     skills: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
     mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
     file: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
+    gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
     list: '<path d="M9 6h12M9 12h12M9 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="3"/>',
     games: '<rect x="2" y="7" width="20" height="11" rx="4"/><path d="M7 10.5v4M5 12.5h4"/><path d="M15.5 12h.01M18 14h.01" stroke-width="3"/>',
     software: '<path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>',
@@ -45,7 +47,8 @@
     about: { title: "About me", icon: "user", w: 560, h: 520, render: renderAbout },
     skills: { title: "Skills & tools", icon: "skills", w: 560, h: 480, render: renderSkills },
     contact: { title: "Contact", icon: "mail", w: 460, h: 460, render: renderContact },
-    resume: { title: "Resume.pdf", icon: "file", w: 440, h: 320, render: renderResume }
+    resume: { title: "Resume.pdf", icon: "file", w: 440, h: 320, render: renderResume },
+    settings: { title: "Settings", icon: "gear", w: 600, h: 640, render: renderSettings }
   };
   const DESKTOP = [
     { app: "projects", label: "Projects" },
@@ -53,6 +56,7 @@
     { app: "skills", label: "Skills" },
     { app: "contact", label: "Contact" },
     { app: "resume", label: "Resume" },
+    { app: "settings", label: "Settings" },
     { href: "plain.html", label: "Plain view", icon: "list" }
   ];
 
@@ -77,6 +81,7 @@
     if (!app) return;
     const existing = wins.get(id);
     if (existing) {
+      if (existing.el.hidden) sound("open");
       existing.el.hidden = false;
       focusWin(id);
       existing.el.focus({ preventScroll: true });
@@ -117,9 +122,9 @@
     task.innerHTML = `${svg(app.icon)}<span>${esc(app.title)}</span>`;
     task.addEventListener("click", () => {
       const win = wins.get(id);
-      if (win.el.hidden) { win.el.hidden = false; focusWin(id); }
+      if (win.el.hidden) { win.el.hidden = false; focusWin(id); sound("open"); }
       else if (win.el.classList.contains("is-focused")) minimizeWin(id);
-      else focusWin(id);
+      else { focusWin(id); sound("click"); }
     });
     taskList.append(task);
 
@@ -133,6 +138,7 @@
     el.addEventListener("focusin", () => focusWin(id));
     makeDraggable(id, el, $(".titlebar", el));
 
+    sound("open");
     focusWin(id);
     el.focus({ preventScroll: true });
   }
@@ -161,6 +167,7 @@
   function minimizeWin(id) {
     const win = wins.get(id);
     win.el.hidden = true;
+    sound("minimize");
     blurAll();
     const next = topVisible();
     if (next) { focusWin(next.id); next.w.el.focus({ preventScroll: true }); }
@@ -172,6 +179,7 @@
     win.el.remove();
     win.task.remove();
     wins.delete(id);
+    sound("close");
     blurAll();
     const next = topVisible();
     if (win.opener && document.contains(win.opener) && win.opener !== document.body) {
@@ -331,6 +339,82 @@
       </div>`;
   }
 
+  function renderSettings(body) {
+    const themes = [["system", "System"], ["light", "Light"], ["dark", "Dark"]];
+    body.innerHTML = `
+      <p class="eyebrow">System</p>
+      <h2 class="win-h">Settings</h2>
+      <p class="lead">Make ${esc(D.osName)} yours. Your choices are saved in this browser.</p>
+
+      <fieldset class="set-group">
+        <legend class="section-h">Theme</legend>
+        <div class="segmented">${themes.map(([v, l]) =>
+          `<label><input type="radio" name="theme" value="${v}"><span>${l}</span></label>`).join("")}</div>
+      </fieldset>
+
+      <fieldset class="set-group">
+        <legend class="section-h">Accent color</legend>
+        <div class="swatches">${Object.entries(S.ACCENTS).map(([k, a]) =>
+          `<label class="swatch"><input type="radio" name="accent" value="${k}"><span class="swatch-dot" style="--sw:${a.fill}"></span><span class="swatch-label">${esc(a.label)}</span></label>`).join("")}</div>
+      </fieldset>
+
+      <fieldset class="set-group">
+        <legend class="section-h">Wallpaper</legend>
+        <div class="wall-grid">${Object.entries(S.WALLPAPERS).map(([k, l]) =>
+          `<label class="wall-opt"><input type="radio" name="wallpaper" value="${k}"><span class="wall-thumb wall-thumb--${k}" aria-hidden="true"></span><span class="wall-name">${esc(l)}</span></label>`).join("")}</div>
+      </fieldset>
+
+      <div class="set-group">
+        <h3 class="section-h">Experience</h3>
+        <div class="switch-row">
+          <span><strong>Motion</strong><small>Animations and moving wallpapers</small></span>
+          <button type="button" role="switch" class="switch" data-key="motion" data-quiet aria-label="Motion"></button>
+        </div>
+        <div class="switch-row">
+          <span><strong>Sounds</strong><small>Subtle interface sounds</small></span>
+          <button type="button" role="switch" class="switch" data-key="sound" data-quiet aria-label="Sounds"></button>
+        </div>
+      </div>
+
+      <div class="actions"><button type="button" class="btn" data-reset data-quiet>Reset to defaults</button></div>`;
+
+    const sync = () => {
+      ["theme", "accent", "wallpaper"].forEach((k) => {
+        const input = $(`input[name="${k}"][value="${S.get(k)}"]`, body);
+        if (input) input.checked = true;
+      });
+      $('[data-key="motion"]', body).setAttribute("aria-checked", String(S.motion()));
+      $('[data-key="sound"]', body).setAttribute("aria-checked", String(S.get("sound")));
+    };
+    sync();
+    // Keep in sync if the system theme changes while the window is open.
+    const off = S.onChange(() => { if (!body.isConnected) off(); else sync(); });
+
+    body.addEventListener("change", (e) => {
+      const input = e.target;
+      if (input.type !== "radio") return;
+      S.set(input.name, input.value);
+      sound("toggle");
+    });
+    body.addEventListener("click", (e) => {
+      const sw = e.target.closest(".switch");
+      if (sw) {
+        const key = sw.dataset.key;
+        const next = sw.getAttribute("aria-checked") !== "true";
+        S.set(key, next);
+        if (key !== "sound" || next) sound("toggle");
+      }
+      if (e.target.closest("[data-reset]")) { S.reset(); sound("toggle"); }
+    });
+  }
+
+  // Soft click for buttons and links that don't already make their own sound.
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest("button, a");
+    if (!el || el.closest("[data-open], .card, .win-btn, .task, [data-quiet]")) return;
+    sound("click");
+  });
+
   // Buttons inside windows that open other apps (e.g. "See my projects").
   layer.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-open]");
@@ -395,101 +479,6 @@
     setInterval(tick, 15000);
   }
 
-  /* ---------- Wallpaper: a dot grid lit by drifting lights ---------- */
-  function wallpaper() {
-    const canvas = $("#wallpaper");
-    const ctx = canvas.getContext("2d");
-    const GAP = 26;
-    const lights = [
-      { amber: true, r: 420, sx: 0.00009, sy: 0.00013, px: 0.0, py: 1.2 },
-      { amber: false, r: 520, sx: 0.00006, sy: 0.00008, px: 2.1, py: 0.3 },
-      { amber: true, r: 260, sx: 0.00012, sy: 0.00007, px: 4.0, py: 2.6 }
-    ];
-    const cursor = { x: 0, y: 0, a: 0, target: 0 };
-    let w = 0, h = 0, raf = 0, last = 0;
-
-    function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.clientWidth; h = canvas.clientHeight;
-      canvas.width = w * dpr; canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (reduceMotion.matches) draw(0);
-    }
-
-    function draw(t) {
-      const scale = Math.max(w, h) / 1400;
-      const pos = lights.map((l) => ({
-        amber: l.amber, r: l.r * scale,
-        x: w * (0.5 + 0.45 * Math.sin(t * l.sx + l.px)),
-        y: h * (0.5 + 0.42 * Math.cos(t * l.sy + l.py))
-      }));
-      cursor.a += (cursor.target - cursor.a) * 0.08;
-      if (cursor.a > 0.01) pos.push({ amber: true, r: 170, x: cursor.x, y: cursor.y, k: cursor.a });
-
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = "#0B1220";
-      ctx.fillRect(0, 0, w, h);
-
-      // Soft glow behind each light
-      for (const p of pos) {
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-        const rgb = p.amber ? "255,176,32" : "76,120,220";
-        g.addColorStop(0, `rgba(${rgb},${p.amber ? 0.09 : 0.12})`);
-        g.addColorStop(1, `rgba(${rgb},0)`);
-        ctx.fillStyle = g;
-        ctx.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
-      }
-
-      // Dots: dim base, amber or blue where lights fall
-      const lit = [];
-      ctx.fillStyle = "rgba(140,152,176,0.13)";
-      for (let y = GAP / 2; y < h; y += GAP) {
-        for (let x = GAP / 2; x < w; x += GAP) {
-          let a = 0, b = 0;
-          for (const p of pos) {
-            const dx = x - p.x, dy = y - p.y;
-            const f = 1 - (dx * dx + dy * dy) / (p.r * p.r);
-            if (f > 0) { const v = f * f * (p.k ?? 1); if (p.amber) a += v; else b += v; }
-          }
-          if (a > 0.03 || b > 0.03) lit.push(x, y, a, b);
-          else ctx.fillRect(x - 0.75, y - 0.75, 1.5, 1.5);
-        }
-      }
-      for (let i = 0; i < lit.length; i += 4) {
-        const x = lit[i], y = lit[i + 1], a = Math.min(lit[i + 2], 1), b = Math.min(lit[i + 3], 1);
-        const s = 1.5 + a * 1.6 + b * 0.6;
-        ctx.globalAlpha = Math.min(0.13 + a * 0.75 + b * 0.4, 1);
-        ctx.fillStyle = a >= b * 0.7 ? "#FFB020" : "#7FA2E6";
-        ctx.fillRect(x - s / 2, y - s / 2, s, s);
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    function loop(t) {
-      raf = requestAnimationFrame(loop);
-      if (t - last < 33) return; // ~30fps is plenty for slow drift
-      last = t;
-      draw(t);
-    }
-    function start() {
-      cancelAnimationFrame(raf);
-      if (reduceMotion.matches || document.hidden) { draw(0); return; }
-      raf = requestAnimationFrame(loop);
-    }
-
-    addEventListener("resize", resize);
-    document.addEventListener("visibilitychange", start);
-    reduceMotion.addEventListener("change", start);
-    addEventListener("pointermove", (e) => {
-      if (e.pointerType !== "mouse") return;
-      const r = canvas.getBoundingClientRect();
-      cursor.x = e.clientX - r.left; cursor.y = e.clientY - r.top; cursor.target = 1;
-    });
-    document.addEventListener("pointerleave", () => { cursor.target = 0; });
-    resize();
-    start();
-  }
-
   /* ---------- Boot ---------- */
   function boot(done) {
     const el = $("#boot");
@@ -497,7 +486,7 @@
     try { seen = sessionStorage.getItem("booted") === "1"; } catch (_) { /* storage blocked */ }
     if (seen) { el.remove(); done(); return; }
 
-    const total = reduceMotion.matches ? 600 : 2000;
+    const total = S.motion() ? 2000 : 600;
     const lines = [`Starting ${D.osName}…`, "Loading projects", "Mounting /games /software /design", "Ready"];
     const log = $("#bootLog");
     $(".boot-bar span", el).style.animationDuration = total + "ms";
@@ -515,6 +504,7 @@
       try { sessionStorage.setItem("booted", "1"); } catch (_) { /* ignore */ }
       el.classList.add("done");
       setTimeout(() => el.remove(), 450);
+      sound("chime"); // only audible if the visitor clicked or pressed a key to skip
       done();
     };
     const timer = setTimeout(finish, total);
@@ -531,7 +521,6 @@
 
   fillText();
   buildDesktop();
-  wallpaper();
   boot(openFromHash);
   addEventListener("hashchange", openFromHash);
 })();
