@@ -44,10 +44,28 @@ Visitors can change the theme (System, Light or Dark), the accent color, the wal
 - Sounds are on by default, but browsers keep pages silent until the first click or key press.
 - To change the accent presets, edit `ACCENTS` in `js/settings.js`. `onLight` is a darker version of the color, used for text on the light theme.
 
+## Keyboard shortcuts
+
+Hold **Alt** (**⌥ Option** on Mac) and press a key. **Alt+/** shows the full list. The shortcuts are off on phones.
+
+| Keys | Action |
+|---|---|
+| Alt+P, A, S, C, R | Open Projects, About me, Skills, Contact, Resume |
+| Alt+, | Open Settings |
+| Alt+[ and Alt+] | Previous / next window |
+| Alt+M | Minimize the front window |
+| Esc | Close the front window |
+
+The list is `SHORTCUTS` in `js/app.js`.
+
+## Secret app
+
+Clicking (or tapping) your name on the desktop 5 times quickly opens a hidden window. Edit its text under `secret` in `js/data.js`. It can't be opened with a link.
+
 ## Deep links
 
 - `index.html#projects` opens the Projects window
-- `index.html#about`, `#skills`, `#contact`, `#resume`, `#settings`
+- `index.html#about`, `#skills`, `#contact`, `#resume`, `#settings`, `#shortcuts`
 - `index.html#project/game-one` opens a single project (uses the project's `id`)
 
 ## Deploying to GitHub Pages

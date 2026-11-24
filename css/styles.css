@@ -117,6 +117,7 @@ img { max-width: 100%; }
   text-align: right; pointer-events: none; max-width: 70%;
 }
 .hello-name {
+  display: inline-block; pointer-events: auto; user-select: none; -webkit-user-select: none; /* clickable for the secret */
   margin: 0; font-size: clamp(40px, 6vw, 88px); font-weight: 700;
   letter-spacing: -.045em; line-height: .95;
 }
@@ -163,6 +164,8 @@ img { max-width: 100%; }
   overflow: hidden; resize: both;
   animation: win-in .2s var(--ease);
 }
+.window { transform-origin: 0 0; }
+.window.anim-js { animation: none; } /* zoom animation is run from JS instead */
 .window:focus { outline: none; }
 .window.is-focused { border-color: var(--line-strong); }
 .window[hidden] { display: none; }
@@ -510,6 +513,38 @@ body.plain { overflow: auto; }
 }
 .switch[aria-checked="true"] { background: var(--accent); }
 .switch[aria-checked="true"]::after { transform: translateX(18px); }
+
+/* ============ Keyboard shortcuts window ============ */
+.shortcut-list { margin: 0; }
+.shortcut-list div {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 10px 0; border-bottom: 1px solid var(--line);
+}
+.shortcut-list div:last-child { border-bottom: 0; }
+.shortcut-list dd { margin: 0; display: flex; gap: 4px; }
+kbd {
+  min-width: 26px; padding: 3px 7px; text-align: center;
+  font-family: var(--font-mono); font-size: 12px; color: var(--text);
+  background: var(--surface-2); border: 1px solid var(--line-strong); border-bottom-width: 2px;
+  border-radius: 5px;
+}
+
+/* ============ Secret app ============ */
+.secret { text-align: center; padding-top: 8px; }
+.secret .prose p { margin-left: auto; margin-right: auto; }
+.secret-badge {
+  width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink);
+  animation: secret-pop .6s var(--ease) both;
+}
+.secret-badge svg { width: 28px; height: 28px; }
+@keyframes secret-pop {
+  0% { transform: scale(.4) rotate(-20deg); opacity: 0; }
+  60% { transform: scale(1.12) rotate(6deg); opacity: 1; }
+  100% { transform: none; }
+}
+.secret-foot { margin: 18px 0 0; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
 
 /* ============ Motion off (Settings, or the visitor's reduced-motion preference) ============ */
 .no-motion *, .no-motion *::before, .no-motion *::after {

@@ -19,6 +19,8 @@
     mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
     file: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
     gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+    keyboard: '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01" stroke-width="2.4"/><path d="M7 14h10"/>',
+    unlock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/><path d="M12 15v2"/>',
     list: '<path d="M9 6h12M9 12h12M9 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="3"/>',
     games: '<rect x="2" y="7" width="20" height="11" rx="4"/><path d="M7 10.5v4M5 12.5h4"/><path d="M15.5 12h.01M18 14h.01" stroke-width="3"/>',
     software: '<path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>',
@@ -48,7 +50,10 @@
     skills: { title: "Skills & tools", icon: "skills", w: 560, h: 480, render: renderSkills },
     contact: { title: "Contact", icon: "mail", w: 460, h: 460, render: renderContact },
     resume: { title: "Resume.pdf", icon: "file", w: 440, h: 320, render: renderResume },
-    settings: { title: "Settings", icon: "gear", w: 600, h: 640, render: renderSettings }
+    settings: { title: "Settings", icon: "gear", w: 600, h: 640, render: renderSettings },
+    // Not on the desktop: opened with Alt+/ (or #shortcuts) and the secret trick.
+    shortcuts: { title: "Keyboard shortcuts", icon: "keyboard", w: 460, h: 600, render: renderShortcuts },
+    secret: { title: "Secret.app", icon: "unlock", w: 440, h: 440, render: renderSecret }
   };
   const DESKTOP = [
     { app: "projects", label: "Projects" },
@@ -76,13 +81,58 @@
   let z = 10;
   let cascade = 0;
 
-  function openWin(id) {
+  /* ---------- Zoom animations ----------
+     Windows grow out of whatever opened them (an icon, card, menu item or
+     taskbar button) and shrink into their taskbar button when minimized. */
+  const EASE_OUT = "cubic-bezier(.2, .8, .2, 1)";
+  const EASE_IN_OUT = "cubic-bezier(.4, 0, .6, 1)";
+
+  function zoomTransform(el, rect) {
+    const w = el.getBoundingClientRect();
+    if (!rect || !rect.width || !w.width) return null;
+    return `translate(${rect.left - w.left}px, ${rect.top - w.top}px) scale(${rect.width / w.width}, ${rect.height / w.height})`;
+  }
+
+  function zoomIn(el, rect) {
+    if (!S.motion() || !el.animate) return;
+    const from = zoomTransform(el, rect);
+    if (!from) return;
+    el.classList.add("anim-js");
+    el.animate(
+      [{ transform: from, opacity: 0, offset: 0 }, { opacity: 1, offset: 0.35 }, { transform: "none", opacity: 1, offset: 1 }],
+      { duration: 300, easing: EASE_OUT });
+  }
+
+  // Resolves to true when it finished, false if it was cancelled.
+  function zoomOut(el, rect) {
+    const to = S.motion() && el.animate ? zoomTransform(el, rect) : null;
+    if (!to) return { done: Promise.resolve(true), cancel() {} };
+    el.style.pointerEvents = "none";
+    const anim = el.animate(
+      [{ transform: "none", opacity: 1 }, { opacity: 1, offset: 0.6 }, { transform: to, opacity: 0 }],
+      { duration: 240, easing: EASE_IN_OUT });
+    const done = anim.finished.then(() => true, () => false).finally(() => { el.style.pointerEvents = ""; });
+    return { done, cancel: () => anim.cancel() };
+  }
+
+  const isHidden = (win) => win.el.hidden || !!win.minimizing;
+
+  function restoreWin(id, rect) {
+    const win = wins.get(id);
+    if (win.minimizing) { win.minimizing.cancel(); win.minimizing = null; }
+    else if (win.el.hidden) { win.el.hidden = false; zoomIn(win.el, rect); }
+    sound("open");
+    focusWin(id);
+    win.el.focus({ preventScroll: true });
+  }
+
+  // `from` is the on-screen rectangle of whatever opened the window (optional).
+  function openWin(id, from) {
     const app = getApp(id);
     if (!app) return;
     const existing = wins.get(id);
     if (existing) {
-      if (existing.el.hidden) sound("open");
-      existing.el.hidden = false;
+      if (isHidden(existing)) { restoreWin(id, from); return; }
       focusWin(id);
       existing.el.focus({ preventScroll: true });
       return;
@@ -122,7 +172,7 @@
     task.innerHTML = `${svg(app.icon)}<span>${esc(app.title)}</span>`;
     task.addEventListener("click", () => {
       const win = wins.get(id);
-      if (win.el.hidden) { win.el.hidden = false; focusWin(id); sound("open"); }
+      if (isHidden(win)) restoreWin(id, task.getBoundingClientRect());
       else if (win.el.classList.contains("is-focused")) minimizeWin(id);
       else { focusWin(id); sound("click"); }
     });
@@ -139,6 +189,7 @@
     makeDraggable(id, el, $(".titlebar", el));
 
     sound("open");
+    zoomIn(el, from);
     focusWin(id);
     el.focus({ preventScroll: true });
   }
@@ -155,7 +206,7 @@
   function topVisible() {
     let best = null;
     wins.forEach((w, id) => {
-      if (!w.el.hidden && (!best || +w.el.style.zIndex > +best.w.el.style.zIndex)) best = { id, w };
+      if (!isHidden(w) && (!best || +w.el.style.zIndex > +best.w.el.style.zIndex)) best = { id, w };
     });
     return best;
   }
@@ -166,7 +217,14 @@
 
   function minimizeWin(id) {
     const win = wins.get(id);
-    win.el.hidden = true;
+    if (isHidden(win)) return;
+    const anim = zoomOut(win.el, win.task.getBoundingClientRect());
+    win.minimizing = anim;
+    anim.done.then((finished) => {
+      if (win.minimizing !== anim) return;
+      win.minimizing = null;
+      if (finished) win.el.hidden = true;
+    });
     sound("minimize");
     blurAll();
     const next = topVisible();
@@ -176,7 +234,16 @@
 
   function closeWin(id) {
     const win = wins.get(id);
-    win.el.remove();
+    if (win.minimizing) win.minimizing.cancel();
+    if (S.motion() && win.el.animate && !win.el.hidden) {
+      win.el.style.pointerEvents = "none";
+      win.el.animate(
+        [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(8px)" }],
+        { duration: 140, easing: EASE_IN_OUT }
+      ).finished.finally(() => win.el.remove());
+    } else {
+      win.el.remove();
+    }
     win.task.remove();
     wins.delete(id);
     sound("close");
@@ -267,7 +334,7 @@
     });
     grid.addEventListener("click", (e) => {
       const card = e.target.closest("[data-id]");
-      if (card) openWin("project:" + card.dataset.id);
+      if (card) openWin("project:" + card.dataset.id, card.getBoundingClientRect());
     });
   }
 
@@ -408,6 +475,89 @@
     });
   }
 
+  /* ---------- Keyboard shortcuts ---------- */
+  const IS_MAC = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent);
+  const MOD = IS_MAC ? "⌥ Option" : "Alt";
+  // `code` is the physical key, so shortcuts work on any keyboard layout.
+  const SHORTCUTS = [
+    { code: "KeyP", key: "P", app: "projects", label: "Open Projects" },
+    { code: "KeyA", key: "A", app: "about", label: "Open About me" },
+    { code: "KeyS", key: "S", app: "skills", label: "Open Skills" },
+    { code: "KeyC", key: "C", app: "contact", label: "Open Contact" },
+    { code: "KeyR", key: "R", app: "resume", label: "Open Resume" },
+    { code: "Comma", key: ",", app: "settings", label: "Open Settings" },
+    { code: "BracketLeft", key: "[", action: "prev", label: "Previous window" },
+    { code: "BracketRight", key: "]", action: "next", label: "Next window" },
+    { code: "KeyM", key: "M", action: "minimize", label: "Minimize window" },
+    { code: "Slash", key: "/", app: "shortcuts", label: "Show this list" }
+  ];
+
+  function cycleWindows(step) {
+    const ids = [...wins.keys()];
+    if (!ids.length) return;
+    const current = ids.findIndex((id) => wins.get(id).el.classList.contains("is-focused") && !isHidden(wins.get(id)));
+    const next = ids[(current + step + ids.length) % ids.length];
+    if (isHidden(wins.get(next))) restoreWin(next, wins.get(next).task.getBoundingClientRect());
+    else { focusWin(next); wins.get(next).el.focus({ preventScroll: true }); sound("click"); }
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (!e.altKey || e.ctrlKey || e.metaKey || phone.matches) return;
+    const t = e.target;
+    const typing = t.isContentEditable || /^(TEXTAREA|SELECT)$/.test(t.tagName) ||
+      (t.tagName === "INPUT" && !["radio", "checkbox", "button", "range"].includes(t.type));
+    if (typing) return;
+    const sc = SHORTCUTS.find((s) => s.code === e.code);
+    if (!sc) return;
+    e.preventDefault();
+    if (sc.app) openWin(sc.app);
+    else if (sc.action === "prev") cycleWindows(-1);
+    else if (sc.action === "next") cycleWindows(1);
+    else if (sc.action === "minimize") {
+      const top = topVisible();
+      if (top && top.w.el.classList.contains("is-focused")) minimizeWin(top.id);
+    }
+  });
+
+  function renderShortcuts(body) {
+    const keys = (...k) => k.map((x) => `<kbd>${esc(x)}</kbd>`).join("");
+    body.innerHTML = `
+      <p class="eyebrow">Keyboard</p>
+      <h2 class="win-h">Shortcuts</h2>
+      <p class="lead">Hold ${esc(MOD)} and press a key.</p>
+      <dl class="shortcut-list">
+        ${SHORTCUTS.map((s) => `<div><dt>${esc(s.label)}</dt><dd>${keys(MOD, s.key)}</dd></div>`).join("")}
+        <div><dt>Close window</dt><dd>${keys("Esc")}</dd></div>
+      </dl>`;
+  }
+
+  /* ---------- Secret app: click your name 5 times quickly ---------- */
+  function renderSecret(body) {
+    const s = D.secret || {};
+    body.innerHTML = `
+      <div class="secret">
+        <span class="secret-badge" aria-hidden="true">${svg("unlock")}</span>
+        <p class="eyebrow">Secret unlocked</p>
+        <h2 class="win-h">${esc(s.title || "You found it!")}</h2>
+        <div class="prose">${(s.message || []).map((t) => `<p>${esc(t)}</p>`).join("")}</div>
+        <p class="secret-foot">Keep it between us.</p>
+      </div>`;
+  }
+
+  (() => {
+    const name = $(".hello-name");
+    let clicks = [];
+    name.addEventListener("click", () => {
+      const now = performance.now();
+      clicks = clicks.filter((t) => now - t < 1500);
+      clicks.push(now);
+      if (clicks.length < 5) return;
+      clicks = [];
+      openWin("secret", name.getBoundingClientRect());
+      sound("chime");
+    });
+  })();
+
   // Soft click for buttons and links that don't already make their own sound.
   document.addEventListener("click", (e) => {
     const el = e.target.closest("button, a");
@@ -418,7 +568,7 @@
   // Buttons inside windows that open other apps (e.g. "See my projects").
   layer.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-open]");
-    if (btn) openWin(btn.dataset.open);
+    if (btn) openWin(btn.dataset.open, btn.getBoundingClientRect());
   });
 
   /* ---------- Desktop icons & launcher ---------- */
@@ -437,7 +587,7 @@
     icons.innerHTML = DESKTOP.map((it) => `<li>${itemHTML(it, "icon")}</li>`).join("");
     icons.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-open]");
-      if (btn) openWin(btn.dataset.open);
+      if (btn) openWin(btn.dataset.open, ($(".icon-glyph", btn) || btn).getBoundingClientRect());
     });
 
     const launcher = $("#launcher");
@@ -453,7 +603,11 @@
     osBtn.addEventListener("click", () => setLauncher(launcher.hidden));
     launcher.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-open]");
-      if (btn) { setLauncher(false); openWin(btn.dataset.open); }
+      if (btn) {
+        const rect = btn.getBoundingClientRect(); // measure before the menu hides
+        setLauncher(false);
+        openWin(btn.dataset.open, rect);
+      }
     });
     document.addEventListener("pointerdown", (e) => {
       if (!launcher.hidden && !launcher.contains(e.target) && !osBtn.contains(e.target)) setLauncher(false);
@@ -515,7 +669,7 @@
   /* ---------- Deep links: #projects, #about, #project/<id> ---------- */
   function openFromHash() {
     const h = decodeURIComponent(location.hash.slice(1));
-    if (!h) return;
+    if (!h || h === "secret") return; // the secret can't be deep-linked
     openWin(h.startsWith("project/") ? "project:" + h.slice(8) : h);
   }
 
