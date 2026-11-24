@@ -643,8 +643,8 @@ kbd {
 .policy li::marker { color: var(--accent-text); }
 .plain main > h1 + .policy { margin-top: 20px; }
 
-.plain-footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 13px; }
-.error-foot { margin: 18px 0 0; font-family: var(--font-mono); font-size: 12px; }
+.plain-footer { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 13px; }
+.error-foot { display: flex; gap: 20px; margin: 18px 0 0; font-family: var(--font-mono); font-size: 12px; }
 .error-foot a { color: var(--muted); }
 
 .launcher-sep { height: 1px; margin: 6px 8px; background: var(--line); }
@@ -652,8 +652,10 @@ button.task-plain { border: 0; background: none; cursor: pointer; }
 .phone-footer { display: none; }
 @media (max-width: 767px) {
   .phone-footer {
-    display: block; position: absolute; left: 50%; transform: translateX(-50%);
-    bottom: calc(18px + env(safe-area-inset-bottom));
+    display: flex; justify-content: center; gap: 8px;
+    position: absolute; left: 0; right: 0; bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+  .phone-footer button {
     padding: 8px 12px; border: 0; background: none; cursor: pointer;
     font-family: var(--font-mono); font-size: 12px; color: var(--muted);
   }

@@ -16,6 +16,7 @@ A portfolio site styled as a custom desktop operating system. It uses plain HTML
 | `js/sound.js` | Interface sounds, generated in code (no audio files). |
 | `js/plain.js` | Builds the plain view from `data.js`. |
 | `privacy.html` | The privacy policy page. Its text lives in `js/privacy.js`, which the desktop's Privacy window also uses. |
+| `terms.html` | The terms and conditions page. Its text lives in `js/terms.js`, which the desktop's Terms window also uses. |
 | `css/fonts.css` | Self-hosted fonts (files in `assets/fonts/`, with their open-source licences). |
 | `404.html` | The "File not found" page GitHub Pages shows for missing addresses. |
 | `assets/` | Favicon, home-screen icon and link-preview image. |
@@ -85,6 +86,15 @@ Clicking (or tapping) your name on the desktop 5 times quickly opens a hidden wi
 The policy is in `js/privacy.js`, and it's shown at `privacy.html` and in the desktop's Privacy window. It's linked from the taskbar, the OS menu, the phone home screen, the plain view and the 404 page. It fills in your name and email from `js/data.js`, and it only mentions YouTube if a project has a video.
 
 It describes what the site does now: no cookies or analytics, settings saved only in the visitor's browser, GitHub Pages hosting and self-hosted fonts. **If you add anything that collects data or loads content from another service** (analytics, a contact form, comments, another embed), update the text and `LAST_UPDATED` at the top of the file. This is a plain-language policy for a personal site, not legal advice.
+
+## Terms and conditions
+
+The terms are in `js/terms.js`, and they're shown at `terms.html` and in the desktop's Terms window, linked everywhere the privacy policy is. They say:
+- All rights are reserved for your work and for the site's design and code. Visitors may browse and share links, but not copy or reuse anything without permission.
+- There's no warranty, and your liability is limited.
+- There's no governing-law clause.
+
+The copyright year updates automatically. If you later license your code (e.g. MIT) or some of your work (e.g. Creative Commons), update the terms and `LAST_UPDATED` to match. This is a plain-language template for a personal site, not legal advice.
 
 ## Screenshot galleries
 

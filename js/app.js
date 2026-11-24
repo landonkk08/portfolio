@@ -21,6 +21,7 @@
     gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
     keyboard: '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01" stroke-width="2.4"/><path d="M7 14h10"/>',
     unlock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/><path d="M12 15v2"/>',
+    terms: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M9 15l2 2 4-4"/>',
     shield: '<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
     list: '<path d="M9 6h12M9 12h12M9 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="3"/>',
     games: '<rect x="2" y="7" width="20" height="11" rx="4"/><path d="M7 10.5v4M5 12.5h4"/><path d="M15.5 12h.01M18 14h.01" stroke-width="3"/>',
@@ -54,6 +55,7 @@
     resume: { title: "Resume.pdf", icon: "file", w: 440, h: 320, render: renderResume },
     settings: { title: "Settings", icon: "gear", w: 600, h: 640, render: renderSettings },
     privacy: { title: "Privacy policy", icon: "shield", w: 600, h: 620, render: (b) => window.renderPrivacy(b, "h3") },
+    terms: { title: "Terms and conditions", icon: "terms", w: 600, h: 620, render: (b) => window.renderTerms(b, "h3") },
     // Not on the desktop: opened with Alt+/ (or #shortcuts) and the secret trick.
     shortcuts: { title: "Keyboard shortcuts", icon: "keyboard", w: 460, h: 600, render: renderShortcuts },
     secret: { title: "Secret.app", icon: "unlock", w: 440, h: 440, render: renderSecret }
@@ -673,7 +675,9 @@
   // Buttons inside windows that open other apps (e.g. "See my projects").
   layer.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-open]");
-    if (btn) openWin(btn.dataset.open, btn.getBoundingClientRect());
+    if (!btn) return;
+    e.preventDefault(); // links like "privacy policy" open a window here instead of a new page
+    openWin(btn.dataset.open, btn.getBoundingClientRect());
   });
 
   /* ---------- Desktop icons & launcher ---------- */
@@ -701,10 +705,11 @@
       <div class="launcher-head"><strong>${esc(D.owner.name)}</strong><span>${esc(D.owner.role)}</span></div>
       ${DESKTOP.map((it) => itemHTML(it, "launcher-item")).join("")}
       <div class="launcher-sep"></div>
-      ${itemHTML({ app: "privacy", label: "Privacy policy" }, "launcher-item")}`;
+      ${itemHTML({ app: "privacy", label: "Privacy policy" }, "launcher-item")}
+      ${itemHTML({ app: "terms", label: "Terms and conditions" }, "launcher-item")}`;
 
-    // Privacy link in the taskbar (desktop) and at the bottom of the home screen (phones)
-    $$(".taskbar [data-open], .phone-footer[data-open]").forEach((btn) =>
+    // Privacy and Terms links in the taskbar (desktop) and at the bottom of the home screen (phones)
+    $$(".taskbar [data-open], .phone-footer [data-open]").forEach((btn) =>
       btn.addEventListener("click", () => openWin(btn.dataset.open, btn.getBoundingClientRect())));
     const setLauncher = (open) => {
       launcher.hidden = !open;

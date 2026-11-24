@@ -42,5 +42,5 @@
       <h2>Contact</h2>
       <ul class="contact-list">${contacts.join("")}</ul>
     </main>
-    <footer class="plain-footer"><a href="privacy.html">Privacy policy</a></footer>`;
+    <footer class="plain-footer"><a href="privacy.html">Privacy policy</a><a href="terms.html">Terms and conditions</a></footer>`;
 })();
