@@ -29,6 +29,7 @@
     max: '<rect x="5" y="5" width="14" height="14" rx="1.5"/>',
     close: '<path d="M6 6l12 12M18 6L6 18"/>',
     back: '<path d="M15 5l-7 7 7 7"/>',
+    next: '<path d="M9 5l7 7-7 7"/>',
     external: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
     download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>'
   };
@@ -350,10 +351,105 @@
       ${media}
       <dl class="meta-row">${meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
       <div class="prose">${(p.description || []).map((t) => `<p>${esc(t)}</p>`).join("")}</div>
-      ${p.gallery && p.gallery.length ? `<h3 class="section-h">Gallery</h3><div class="gallery">${p.gallery.map((src, i) => `<img src="${esc(src)}" alt="${esc(p.title)} screenshot ${i + 1}" loading="lazy">`).join("")}</div>` : ""}
+      ${p.gallery && p.gallery.length ? `<h3 class="section-h">Gallery</h3><div class="gallery">${p.gallery.map((src, i) =>
+        `<button class="shot" type="button" data-shot="${i}" data-quiet aria-label="View screenshot ${i + 1} of ${p.gallery.length} full screen"><img src="${esc(src)}" alt="${esc(p.title)} screenshot ${i + 1}" loading="lazy"></button>`).join("")}</div>` : ""}
       ${p.tags && p.tags.length ? `<h3 class="section-h">Built with</h3><ul class="tags">${p.tags.map((t) => `<li class="tag">${esc(t)}</li>`).join("")}</ul>` : ""}
       ${p.links && p.links.length ? `<div class="actions">${p.links.map((l, i) => `<a class="btn${i === 0 ? " primary" : ""}" href="${esc(l.url)}"${extLink(l.url)}>${esc(l.label)}${svg("external")}</a>`).join("")}</div>` : ""}`;
+
+    body.addEventListener("click", (e) => {
+      const shot = e.target.closest("[data-shot]");
+      if (shot) viewer.open(p.gallery, +shot.dataset.shot, p.title);
+    });
   }
+
+  /* ---------- Screenshot viewer (full-screen gallery) ---------- */
+  const viewer = (() => {
+    let el = null, imgs = [], idx = 0, title = "", opener = null, startX = null;
+
+    function build() {
+      el = document.createElement("div");
+      el.className = "viewer";
+      el.hidden = true;
+      el.setAttribute("role", "dialog");
+      el.setAttribute("aria-modal", "true");
+      el.setAttribute("aria-label", "Screenshot viewer");
+      el.innerHTML = `
+        <button class="viewer-btn viewer-close" type="button" data-quiet aria-label="Close viewer">${svg("close")}</button>
+        <button class="viewer-btn viewer-prev" type="button" data-quiet aria-label="Previous screenshot">${svg("back")}</button>
+        <figure class="viewer-stage"><img alt=""><figcaption class="viewer-count" aria-live="polite"></figcaption></figure>
+        <button class="viewer-btn viewer-next" type="button" data-quiet aria-label="Next screenshot">${svg("next")}</button>`;
+      document.body.append(el);
+
+      el.addEventListener("click", (e) => {
+        if (e.target.closest(".viewer-close") || e.target === el || e.target.classList.contains("viewer-stage")) close();
+        else if (e.target.closest(".viewer-prev")) go(-1);
+        else if (e.target.closest(".viewer-next")) go(1);
+      });
+      // Swipe left/right on touch screens
+      el.addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse") startX = e.clientX; });
+      el.addEventListener("pointerup", (e) => {
+        if (startX === null) return;
+        const dx = e.clientX - startX;
+        startX = null;
+        if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+      });
+    }
+
+    function show() {
+      const img = $("img", el);
+      img.src = imgs[idx];
+      img.alt = `${title} screenshot ${idx + 1} of ${imgs.length}`;
+      img.style.animation = "none";
+      void img.offsetWidth; // restart the fade-in for each screenshot
+      img.style.animation = "";
+      $(".viewer-count", el).textContent = `${idx + 1} / ${imgs.length}`;
+      el.classList.toggle("is-single", imgs.length < 2);
+    }
+
+    // Capture phase, so Esc and the arrow keys don't also reach the desktop.
+    function onKey(e) {
+      const keys = { Escape: close, ArrowLeft: () => go(-1), ArrowRight: () => go(1) };
+      if (keys[e.key]) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        keys[e.key]();
+      } else if (e.key === "Tab") {
+        const f = $$(".viewer-btn", el).filter((b) => b.offsetParent !== null);
+        const i = f.indexOf(document.activeElement);
+        e.preventDefault();
+        f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+      } else if (e.altKey) {
+        e.stopImmediatePropagation(); // no desktop shortcuts while viewing
+      }
+    }
+
+    function open(list, i, t) {
+      if (!el) build();
+      imgs = list; idx = i; title = t;
+      opener = document.activeElement;
+      show();
+      el.hidden = false;
+      document.addEventListener("keydown", onKey, true);
+      sound("open");
+      $(".viewer-close", el).focus();
+    }
+
+    function close() {
+      el.hidden = true;
+      document.removeEventListener("keydown", onKey, true);
+      sound("close");
+      if (opener && document.contains(opener)) opener.focus({ preventScroll: true });
+    }
+
+    function go(step) {
+      if (imgs.length < 2) return;
+      idx = (idx + step + imgs.length) % imgs.length;
+      show();
+      sound("click");
+    }
+
+    return { open };
+  })();
 
   function initials(name) {
     return esc(String(name || "?").split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase());

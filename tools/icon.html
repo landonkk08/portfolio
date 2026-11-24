@@ -1,0 +1,30 @@
+<!doctype html>
+<!-- Renders the OS logo for PNG icons. Used by tools/make-images.ps1.
+     ?size=N  pixel size of the icon (drawn at the top-left corner)
+     &full    square edge-to-edge tile (phones round the corners themselves) -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden; }
+  .mark { position: absolute; left: 0; top: 0; background: #FFB020; border-radius: 28%; }
+  .full .mark { border-radius: 0; }
+  .mark::after {
+    content: ""; position: absolute; width: 40%; height: 40%;
+    right: 18%; top: 18%; border-radius: 50%; background: #0B1220;
+  }
+  .full .mark::after { width: 32%; height: 32%; right: 24%; top: 24%; }
+</style>
+</head>
+<body>
+  <div class="mark"></div>
+  <script>
+    const q = new URLSearchParams(location.search);
+    const size = (parseInt(q.get("size"), 10) || 64) + "px";
+    const mark = document.querySelector(".mark");
+    mark.style.width = size;
+    mark.style.height = size;
+    if (q.has("full")) document.body.className = "full";
+  </script>
+</body>
+</html>

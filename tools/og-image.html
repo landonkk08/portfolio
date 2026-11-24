@@ -1,0 +1,65 @@
+<!doctype html>
+<!-- The 1200x630 link-preview image. Reads your name and role from js/data.js.
+     Rendered to assets/og-image.png by tools/make-images.ps1. -->
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=block" rel="stylesheet">
+<style>
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    position: relative;
+    background:
+      radial-gradient(circle at 88% 8%, rgba(255, 176, 32, .22), transparent 42%),
+      radial-gradient(circle at 6% 100%, rgba(76, 120, 220, .28), transparent 45%),
+      radial-gradient(rgba(140, 152, 176, .22) 1.4px, transparent 2px) 0 0 / 26px 26px,
+      #0B1220;
+    color: #E6EAF2; font-family: "Space Grotesk", sans-serif;
+  }
+  .brand { position: absolute; left: 72px; top: 64px; display: flex; align-items: center; gap: 14px;
+    font-family: "JetBrains Mono", monospace; font-size: 22px; color: #8C98B0; }
+  .mark { width: 36px; height: 36px; border-radius: 10px; background: #FFB020; position: relative; }
+  .mark::after { content: ""; position: absolute; width: 40%; height: 40%; right: 18%; top: 18%; border-radius: 50%; background: #0B1220; }
+  .text { position: absolute; left: 72px; bottom: 150px; width: 600px; }
+  h1 { margin: 0; font-size: 92px; font-weight: 700; letter-spacing: -.045em; line-height: .95; }
+  .role { margin: 22px 0 0; font-family: "JetBrains Mono", monospace; font-size: 26px; color: #FFB020; }
+  .url { position: absolute; left: 72px; bottom: 64px; font-family: "JetBrains Mono", monospace; font-size: 20px; color: #8C98B0; }
+
+  /* A mock window, hinting at the desktop OS */
+  .win { position: absolute; right: -40px; top: 150px; width: 470px; height: 400px;
+    background: #141D2F; border: 1px solid #33456A; border-radius: 18px;
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,.7); overflow: hidden; }
+  .bar { height: 46px; border-bottom: 1px solid #24324D; display: flex; align-items: center; gap: 10px; padding: 0 18px;
+    font-family: "JetBrains Mono", monospace; font-size: 15px; color: #E6EAF2; }
+  .bar i { width: 16px; height: 13px; border: 2px solid #FFB020; border-radius: 3px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 20px; }
+  .tile { height: 150px; border-radius: 12px; border: 1px solid #24324D;
+    background: radial-gradient(circle at 75% 25%, var(--c), transparent 60%), #1B2640; }
+</style>
+</head>
+<body>
+  <div class="brand"><span class="mark"></span><span id="os"></span></div>
+  <div class="text">
+    <h1 id="name"></h1>
+    <p class="role" id="role"></p>
+  </div>
+  <div class="url" id="url"></div>
+  <div class="win">
+    <div class="bar"><i></i>Projects</div>
+    <div class="grid">
+      <div class="tile" style="--c: rgba(255,176,32,.7)"></div>
+      <div class="tile" style="--c: rgba(255,107,91,.7)"></div>
+      <div class="tile" style="--c: rgba(76,141,255,.7)"></div>
+      <div class="tile" style="--c: rgba(167,139,250,.7)"></div>
+    </div>
+  </div>
+  <script src="../js/data.js"></script>
+  <script>
+    const D = window.PORTFOLIO;
+    document.getElementById("os").textContent = D.osName;
+    document.getElementById("name").textContent = D.owner.name;
+    document.getElementById("role").textContent = D.owner.role;
+    document.getElementById("url").textContent = (D.siteUrl || "").replace(/^https?:\/\//, "").replace(/\/$/, "");
+  </script>
+</body>
+</html>

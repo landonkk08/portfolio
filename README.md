@@ -15,6 +15,9 @@ A portfolio site styled as a custom desktop operating system. It uses plain HTML
 | `js/wallpaper.js` | The animated wallpapers: drifting lights, topographic, starfield and plain gradient. |
 | `js/sound.js` | Interface sounds, generated in code (no audio files). |
 | `js/plain.js` | Builds the plain view from `data.js`. |
+| `404.html` | The "File not found" page GitHub Pages shows for missing addresses. |
+| `assets/` | Favicon, home-screen icon and link-preview image. |
+| `tools/` | Pages and a script that generate the PNG images in `assets/`. Not part of the live site. |
 
 ## Adding your content
 
@@ -61,6 +64,25 @@ The list is `SHORTCUTS` in `js/app.js`.
 ## Secret app
 
 Clicking (or tapping) your name on the desktop 5 times quickly opens a hidden window. Edit its text under `secret` in `js/data.js`. It can't be opened with a link.
+
+## Icons, link previews and the 404 page
+
+- **Favicon:** `assets/favicon.svg` (the OS logo), with PNG fallbacks `assets/favicon-32.png` and `assets/apple-touch-icon.png` for phone home screens.
+- **Link-preview image:** `assets/og-image.png` (1200×630), designed in `tools/og-image.html`. It shows your OS name, name, role and `siteUrl` from `js/data.js`.
+- **After changing your name, role or OS name**, regenerate the images (needs Microsoft Edge):
+
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File tools\make-images.ps1
+  ```
+
+  Then update the `og:title` and `og:description` tags near the top of `index.html` and `plain.html`. Link-preview sites can't run JavaScript, so those tags have to be written out by hand.
+- **404 page:** `404.html` is shown by GitHub Pages for any address that doesn't exist. It assumes the site lives at `/portfolio/`. If you rename the repository, change `repo` in its first script (and the URLs in the `og:` tags).
+
+## Screenshot galleries
+
+Add `gallery: ["assets/projects/shot-1.png", ...]` to a project in `js/data.js`. Clicking a screenshot opens a full-screen viewer:
+- Arrow buttons or the ← → keys flip between screenshots, and swiping works on phones.
+- Esc or the × button closes it.
 
 ## Deep links
 
