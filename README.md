@@ -139,3 +139,13 @@ Add `gallery: ["assets/projects/shot-1.png", ...]` to a project in `js/data.js`.
 2. Push these files to the `main` branch.
 3. In the repository, go to **Settings → Pages**, set **Source** to "Deploy from a branch", and pick `main` and `/ (root)`.
 4. Wait about a minute, then open the URL GitHub shows.
+5. On the same **Settings → Pages** screen, tick **Enforce HTTPS**. (If you add your own domain, the box only becomes available once GitHub has issued its certificate, which can take up to a day.)
+
+### HTTPS
+
+The site is meant to be served only over HTTPS. Two layers make sure of that:
+
+- **GitHub's Enforce HTTPS setting** (step 5 above) is the main one. GitHub redirects every `http://` visit before the page loads.
+- **A backup in every page's `<head>`** (`index.html`, `plain.html`, `privacy.html`, `terms.html`, `404.html`): a short script that redirects `http://` to `https://`, and a `upgrade-insecure-requests` tag that makes the browser fetch any `http://` image, font or script over HTTPS. The redirect is skipped on `localhost`, so local previews keep working. If you add a new page, copy those lines into its head.
+
+Always use `https://` links for images, videos and other files you add.
