@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Portfolio</title>
+  <meta name="description" content="Portfolio of projects in games, software and design.">
+  <meta name="theme-color" content="#0B1220">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="os">
+  <a class="skip-link" href="plain.html">Skip to plain project list</a>
+
+  <div id="boot" class="boot" role="status" aria-live="polite">
+    <div class="boot-inner">
+      <span class="os-mark os-mark--lg" aria-hidden="true"></span>
+      <p class="boot-name" data-os-name></p>
+      <div class="boot-bar" aria-hidden="true"><span></span></div>
+      <p class="boot-log" id="bootLog"></p>
+      <p class="boot-hint">Click or press any key to skip</p>
+    </div>
+  </div>
+
+  <main id="desktop" class="desktop">
+    <canvas id="wallpaper" class="wallpaper" aria-hidden="true"></canvas>
+
+    <div class="statusbar" aria-hidden="true">
+      <span data-clock></span>
+      <span data-os-name></span>
+    </div>
+
+    <div class="hello">
+      <h1 class="hello-name" data-owner-name></h1>
+      <p class="hello-role" data-owner-role></p>
+    </div>
+
+    <ul id="icons" class="icons" aria-label="Desktop apps"></ul>
+    <div id="windows" class="windows"></div>
+  </main>
+
+  <nav class="taskbar" aria-label="Taskbar">
+    <button class="os-button" id="osButton" type="button" aria-expanded="false" aria-controls="launcher">
+      <span class="os-mark" aria-hidden="true"></span>
+      <span data-os-name></span>
+    </button>
+    <div class="task-list" id="taskList" aria-label="Open windows"></div>
+    <a class="task-plain" href="plain.html">Plain view</a>
+    <span class="clock" data-clock></span>
+  </nav>
+
+  <div id="launcher" class="launcher" hidden></div>
+
+  <noscript><p class="noscript">This desktop needs JavaScript. <a href="plain.html">Open the plain view</a>.</p></noscript>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
