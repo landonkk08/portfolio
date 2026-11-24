@@ -24,9 +24,7 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Portfolio desktop with a Projects window">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/settings.js"></script>
 </head>
@@ -57,6 +55,7 @@
     </div>
 
     <ul id="icons" class="icons" aria-label="Desktop apps"></ul>
+    <button class="phone-footer" type="button" data-open="privacy">Privacy policy</button>
     <div id="windows" class="windows"></div>
   </main>
 
@@ -66,6 +65,7 @@
       <span data-os-name></span>
     </button>
     <div class="task-list" id="taskList" aria-label="Open windows"></div>
+    <button class="task-plain" type="button" data-open="privacy">Privacy</button>
     <a class="task-plain" href="plain.html">Plain view</a>
     <span class="clock" data-clock></span>
   </nav>
@@ -75,6 +75,7 @@
   <noscript><p class="noscript">This desktop needs JavaScript. <a href="plain.html">Open the plain view</a>.</p></noscript>
 
   <script src="js/data.js"></script>
+  <script src="js/privacy.js"></script>
   <script src="js/sound.js"></script>
   <script src="js/wallpaper.js"></script>
   <script src="js/app.js"></script>

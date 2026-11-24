@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy policy</title>
+  <meta name="description" content="How this portfolio site handles your data.">
+  <meta name="theme-color" content="#0B1220">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/settings.js"></script>
+</head>
+<body class="plain">
+  <div class="plain-wrap">
+    <div class="plain-top">
+      <a href="index.html">← Back to the desktop</a>
+      <a href="plain.html">Plain view</a>
+    </div>
+    <main>
+      <h1>Privacy policy</h1>
+      <div class="policy" id="policy">
+        <noscript><p>This page needs JavaScript to show the policy.</p></noscript>
+      </div>
+    </main>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/privacy.js"></script>
+  <script>
+    document.title = "Privacy policy · " + window.PORTFOLIO.owner.name;
+    window.renderPrivacy(document.getElementById("policy"), "h2");
+  </script>
+</body>
+</html>

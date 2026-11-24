@@ -15,6 +15,8 @@ A portfolio site styled as a custom desktop operating system. It uses plain HTML
 | `js/wallpaper.js` | The animated wallpapers: drifting lights, topographic, starfield and plain gradient. |
 | `js/sound.js` | Interface sounds, generated in code (no audio files). |
 | `js/plain.js` | Builds the plain view from `data.js`. |
+| `privacy.html` | The privacy policy page. Its text lives in `js/privacy.js`, which the desktop's Privacy window also uses. |
+| `css/fonts.css` | Self-hosted fonts (files in `assets/fonts/`, with their open-source licences). |
 | `404.html` | The "File not found" page GitHub Pages shows for missing addresses. |
 | `assets/` | Favicon, home-screen icon and link-preview image. |
 | `tools/` | Pages and a script that generate the PNG images in `assets/`. Not part of the live site. |
@@ -24,7 +26,7 @@ A portfolio site styled as a custom desktop operating system. It uses plain HTML
 1. Open `js/data.js` and replace each placeholder.
 2. Put images in an `assets/` folder, e.g. `assets/projects/my-game.png`, and set `image: "assets/projects/my-game.png"`. A 16:10 ratio works best. With `image: null` the site shows a generated cover.
 3. Save your resume as `assets/resume.pdf`.
-4. Optional: add `video: "https://www.youtube.com/embed/VIDEO_ID"` to a project to show a clip in place of the cover.
+4. Optional: add `video: "https://www.youtube.com/watch?v=VIDEO_ID"` to a project to show a clip in place of the cover. Any YouTube link format works, and it's embedded in privacy-enhanced mode (youtube-nocookie.com).
 
 ## Previewing locally
 
@@ -77,6 +79,12 @@ Clicking (or tapping) your name on the desktop 5 times quickly opens a hidden wi
 
   Then update the `og:title` and `og:description` tags near the top of `index.html` and `plain.html`. Link-preview sites can't run JavaScript, so those tags have to be written out by hand.
 - **404 page:** `404.html` is shown by GitHub Pages for any address that doesn't exist. It assumes the site lives at `/portfolio/`. If you rename the repository, change `repo` in its first script (and the URLs in the `og:` tags).
+
+## Privacy policy
+
+The policy is in `js/privacy.js`, and it's shown at `privacy.html` and in the desktop's Privacy window. It's linked from the taskbar, the OS menu, the phone home screen, the plain view and the 404 page. It fills in your name and email from `js/data.js`, and it only mentions YouTube if a project has a video.
+
+It describes what the site does now: no cookies or analytics, settings saved only in the visitor's browser, GitHub Pages hosting and self-hosted fonts. **If you add anything that collects data or loads content from another service** (analytics, a contact form, comments, another embed), update the text and `LAST_UPDATED` at the top of the file. This is a plain-language policy for a personal site, not legal advice.
 
 ## Screenshot galleries
 

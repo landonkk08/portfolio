@@ -59,7 +59,8 @@ window.PORTFOLIO = {
      category: "games" | "software" | "design"
      image:    path to a cover image (16:10 works best), or null for a generated cover
      color:    accent used on the generated cover
-     video:    optional YouTube embed URL, e.g. "https://www.youtube.com/embed/VIDEO_ID"
+     video:    optional YouTube link (any format), e.g. "https://www.youtube.com/watch?v=VIDEO_ID".
+               It's embedded in privacy-enhanced mode (youtube-nocookie.com).
      gallery:  optional list of extra image paths
      description: list of paragraphs                                          */
   projects: [

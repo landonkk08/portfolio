@@ -41,5 +41,6 @@
       <dl class="plain-skills">${D.skills.map((g) => `<dt>${esc(g.group)}</dt><dd>${g.items.map(esc).join(", ")}</dd>`).join("")}</dl>
       <h2>Contact</h2>
       <ul class="contact-list">${contacts.join("")}</ul>
-    </main>`;
+    </main>
+    <footer class="plain-footer"><a href="privacy.html">Privacy policy</a></footer>`;
 })();
