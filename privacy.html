@@ -6,8 +6,12 @@
   <script>if (location.protocol === "http:" && !/^(localhost|127\.0\.0\.1|\[::1\]|.+\.localhost)$/.test(location.hostname)) location.replace("https:" + location.href.slice(5));</script>
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Privacy policy</title>
-  <meta name="description" content="How this portfolio site handles your data.">
+  <title>Privacy policy · Your Name</title>
+  <meta name="description" content="How Your Name's portfolio site handles your data: no cookies of its own, no analytics and no tracking.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Privacy policy · Your Name">
+  <meta property="og:description" content="How Your Name's portfolio site handles your data: no cookies of its own, no analytics and no tracking.">
+  <meta name="twitter:card" content="summary">
   <meta name="theme-color" content="#0B1220">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
@@ -33,7 +37,6 @@
   <script src="js/data.js"></script>
   <script src="js/privacy.js"></script>
   <script>
-    document.title = "Privacy policy · " + window.PORTFOLIO.owner.name;
     window.renderPrivacy(document.getElementById("policy"), "h2");
   </script>
 </body>

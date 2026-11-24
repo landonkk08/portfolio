@@ -8,8 +8,6 @@
   const ext = (url) => /^https?:/i.test(url) ? ' target="_blank" rel="noopener noreferrer"' : "";
   const o = D.owner;
 
-  document.title = `${o.name} · Portfolio`;
-
   const projects = D.projects.map((p) => `
     <article class="plain-project" id="${esc(p.id)}">
       <p class="eyebrow">${esc(CATS[p.category] || p.category)} · ${esc(p.year)}${p.role ? " · " + esc(p.role) : ""}</p>

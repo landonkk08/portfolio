@@ -207,6 +207,16 @@
     win.el.style.zIndex = ++z;
     win.el.classList.add("is-focused");
     win.task.classList.add("is-active");
+    setTabTitle(getApp(id).title);
+  }
+
+  // Browser tab title: follows the window in front, or the page's own title
+  // (from `meta` in data.js) when no window is focused.
+  function setTabTitle(windowName) {
+    const M = D.meta || {};
+    const fill = (t) => String(t).replace(/\{window\}/g, windowName)
+      .replace(/\{name\}/g, D.owner.name).replace(/\{role\}/g, D.owner.role);
+    document.title = windowName ? fill(M.windowTitle || "{window} · {name}") : fill(M.title || "{name}");
   }
 
   function topVisible() {
@@ -219,6 +229,7 @@
 
   function blurAll() {
     wins.forEach((w) => { w.el.classList.remove("is-focused"); w.task.classList.remove("is-active"); });
+    setTabTitle(null);
   }
 
   function minimizeWin(id) {
@@ -808,7 +819,7 @@
     $$("[data-os-name]").forEach((el) => { el.textContent = D.osName; });
     $$("[data-owner-name]").forEach((el) => { el.textContent = D.owner.name; });
     $$("[data-owner-role]").forEach((el) => { el.textContent = D.owner.role; });
-    document.title = `${D.owner.name} · Portfolio`;
+    setTabTitle(null);
     const tick = () => {
       const t = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       $$("[data-clock]").forEach((el) => { el.textContent = t; });

@@ -12,6 +12,30 @@ window.PORTFOLIO = {
   // Where the site lives once GitHub Pages is on. Shown on the link-preview image.
   siteUrl: "https://landonkk08.github.io/portfolio/",
 
+  /* Page titles and descriptions, shown in browser tabs, search results and
+     link previews. {name} and {role} are replaced with owner.name and
+     owner.role below. After changing these (or your name or role), run:
+         node tools/update-meta.mjs
+     so the text is also written into each page's HTML, where search engines
+     and link previews read it. Titles: under about 60 characters.
+     Descriptions: under about 155. */
+  meta: {
+    title: "{name} · {role}",
+    // Update "game & software developer" here if your role changes.
+    description: "{name} is a game & software developer. Explore games, apps and design work in a portfolio built as a desktop OS you can click around.",
+    // Browser tab title while a window is in front; {window} is its name.
+    windowTitle: "{window} · {name}",
+    pages: {
+      plain:    { title: "{name} · {role} · Plain view",
+                  description: "A simple, scrollable version of {name}'s portfolio: projects, skills, resume and contact details." },
+      privacy:  { title: "Privacy policy · {name}",
+                  description: "How {name}'s portfolio site handles your data: no cookies of its own, no analytics and no tracking." },
+      terms:    { title: "Terms and conditions · {name}",
+                  description: "Terms for using {name}'s portfolio site and the work shown on it." },
+      notFound: { title: "File not found · {name}" }
+    }
+  },
+
   owner: {
     name: "Your Name",
     role: "Game & Software Developer",
