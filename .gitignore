@@ -3,6 +3,19 @@
 Thumbs.db
 desktop.ini
 
+# Secrets and local-only files: never commit these
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+secrets/
+*.local.json
+*.local.*
+
 # Editor and local tool settings
 .vscode/
 .idea/

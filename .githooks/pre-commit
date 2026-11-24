@@ -1,0 +1,40 @@
+#!/bin/sh
+# Safety check that runs before every commit. It refuses the commit if the
+# staged changes look like they contain a password, API key, token or private
+# key, or add a file that should stay on your PC (.env, *.pem, *.local.json...).
+#
+# Everything in this repo is public, on GitHub and in visitors' browsers.
+# Enabled per copy of the repo with:   git config core.hooksPath .githooks
+
+fail=0
+
+# 1. Files that should never be committed
+bad_files=$(git diff --cached --name-only --diff-filter=ACR |
+  grep -iE '(^|/)\.env($|\.)|\.(pem|key|p12|pfx)$|(^|/)id_(rsa|ed25519)|(^|/)secrets/|\.local\.' )
+if [ -n "$bad_files" ]; then
+  echo "Commit blocked: these files look like secrets or local-only files:"
+  echo "$bad_files" | sed 's/^/    /'
+  fail=1
+fi
+
+# 2. Credential-looking text in the lines being added
+added=$(git diff --cached -U0 --no-color --diff-filter=ACM | grep '^+' | grep -v '^+++')
+
+known='AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|sk-[A-Za-z0-9_-]{20,}|(sk|rk)_live_[0-9A-Za-z]{20,}|gh[pousr]_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{40,}|xox[abprs]-[A-Za-z0-9-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+generic='(api[_-]?key|apikey|secret[_-]?key|client[_-]?secret|access[_-]?token|auth[_-]?token|password|passwd)["'\'']?[[:space:]]*[:=][[:space:]]*["'\''][^"'\''[:space:]]{8,}'
+
+hits=$( { printf '%s\n' "$added" | grep -E "$known"; printf '%s\n' "$added" | grep -iE "$generic"; } )
+if [ -n "$hits" ]; then
+  echo "Commit blocked: these added lines look like they contain a key, token or password:"
+  # Only show the start of each line, so the full secret isn't printed again.
+  printf '%s\n' "$hits" | cut -c2-40 | sed 's/^/    /; s/$/.../'
+  fail=1
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo ""
+  echo "Remove it from the commit (and from the file), then try again."
+  echo "Keys must never be in this site. See README: Keeping secrets out."
+  exit 1
+fi
+exit 0

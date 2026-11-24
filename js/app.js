@@ -639,16 +639,39 @@
   }
 
   /* ---------- Secret app: click your name 5 times quickly ---------- */
+  // The message is stored encrypted in js/secret.js (made by tools/encrypt-secret.mjs)
+  // and only decrypted here, after the trick. This keeps it out of view-source
+  // and GitHub; it isn't protection against someone who reads this code.
+  const SECRET_PASSPHRASE = "portfolio-os/secret-app/v1"; // must match tools/encrypt-secret.mjs
+
+  async function decryptSecret() {
+    const box = window.PORTFOLIO_SECRET;
+    if (!box || !window.crypto || !crypto.subtle) throw new Error("Secret unavailable");
+    const bytes = (b64) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+    const baseKey = await crypto.subtle.importKey("raw", new TextEncoder().encode(SECRET_PASSPHRASE), "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt: bytes(box.salt), iterations: box.iterations, hash: "SHA-256" },
+      baseKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: bytes(box.iv) }, key, bytes(box.data));
+    return JSON.parse(new TextDecoder().decode(plain));
+  }
+
   function renderSecret(body) {
-    const s = D.secret || {};
     body.innerHTML = `
       <div class="secret">
         <span class="secret-badge" aria-hidden="true">${svg("unlock")}</span>
         <p class="eyebrow">Secret unlocked</p>
-        <h2 class="win-h">${esc(s.title || "You found it!")}</h2>
-        <div class="prose">${(s.message || []).map((t) => `<p>${esc(t)}</p>`).join("")}</div>
+        <h2 class="win-h">Unlocking…</h2>
+        <div class="prose" aria-live="polite"></div>
         <p class="secret-foot">Keep it between us.</p>
       </div>`;
+    decryptSecret().then((s) => {
+      $(".win-h", body).textContent = s.title;
+      $(".prose", body).innerHTML = s.message.map((t) => `<p>${esc(t)}</p>`).join("");
+    }).catch(() => {
+      $(".win-h", body).textContent = "Almost…";
+      $(".prose", body).innerHTML = "<p>The secret couldn't be opened in this browser. Try another one.</p>";
+    });
   }
 
   (() => {

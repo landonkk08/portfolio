@@ -44,14 +44,9 @@ window.PORTFOLIO = {
     { group: "Design",          items: ["Tool one", "Tool two"] }
   ],
 
-  // Hidden window, unlocked by clicking your name on the desktop 5 times quickly.
-  secret: {
-    title: "You found it!",
-    message: [
-      "Write a fun fact about yourself here, e.g. a weird talent, your first game or a favorite bug you fixed.",
-      "Thanks for exploring this far."
-    ]
-  },
+  // The Secret.app message (unlocked by clicking your name 5 times) isn't here:
+  // it's kept encrypted in js/secret.js. To change it, edit
+  // tools/secret.local.json and run: node tools/encrypt-secret.mjs
 
   projectsIntro: "A one-line intro to your work. Pick a filter or open a project for details.",
 
