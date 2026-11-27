@@ -21,8 +21,8 @@ window.PORTFOLIO = {
      Descriptions: under about 155. */
   meta: {
     title: "{name} · {role}",
-    // Update "aspiring cybersecurity professional" here if your role changes.
-    description: "{name} is an aspiring cybersecurity professional. Explore projects, skills and experience in a portfolio built as a desktop OS you can click around.",
+    // Update "cybersecurity & networking student" here if your role changes.
+    description: "{name} is a cybersecurity & networking student. Explore projects, skills and experience in a portfolio built as a desktop OS you can click around.",
     // Browser tab title while a window is in front; {window} is its name.
     windowTitle: "{window} · {name}",
     pages: {
@@ -38,15 +38,15 @@ window.PORTFOLIO = {
 
   owner: {
     name: "Landon Koch",
-    role: "Aspiring Cybersecurity Professional",
+    role: "Cybersecurity & Networking Student",
     location: "Greater Chattanooga",
     // Path to a square photo or avatar, e.g. "assets/avatar.png".
     // Leave as null to show your initials instead.
     avatar: null,
     // Each string is one paragraph.
     bio: [
-      "I'm a student at the BlueSky Tennessee Institute, working toward a career in cybersecurity.",
-      "This site collects my projects and the skills I'm building along the way. Have a look around, and feel free to get in touch."
+      "I'm a cybersecurity student at the BlueSky Tennessee Institute, a competitive, accelerated computing program from East Tennessee State University and BlueCross BlueShield of Tennessee. I'm earning a B.S. in Computing with a concentration in Cybersecurity and Modern Networks, expected December 2028.",
+      "Alongside my studies, I bring two years of front-line problem solving in fast-paced retail. My goal is to help organizations identify risks, protect their systems and respond to security challenges."
     ]
   },
 
@@ -64,9 +64,11 @@ window.PORTFOLIO = {
   ],
 
   skills: [
-    { group: "Tools",       items: ["Wireshark"] },
-    { group: "Systems",     items: ["Windows", "macOS"] },
-    { group: "Programming", items: ["Python", "HTML"] }
+    { group: "Security & networking", items: ["Networking fundamentals", "Cybersecurity concepts", "Risk identification"] },
+    { group: "Tools",                 items: ["Wireshark"] },
+    { group: "Systems",               items: ["Windows", "macOS", "IT systems", "Point-of-sale systems"] },
+    { group: "Programming",           items: ["Python", "HTML"] },
+    { group: "Professional",          items: ["Customer service", "Clear communication", "Conflict resolution", "Cross-team collaboration", "Problem solving", "Attention to detail", "Adaptability"] }
   ],
 
   // The Secret.app message (unlocked by clicking your name 5 times) isn't here:
