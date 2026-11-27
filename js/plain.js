@@ -18,6 +18,17 @@
       ${p.links && p.links.length ? `<div class="actions">${p.links.map((l) => `<a class="btn" href="${esc(l.url)}"${ext(l.url)}>${esc(l.label)}</a>`).join("")}</div>` : ""}
     </article>`).join("");
 
+  // While there are no projects, show the same coming-soon text as the desktop.
+  const E = D.projectsEmpty || {};
+  const gh = (D.socials || []).find((s) => /github/i.test(s.label));
+  const projectsHtml = D.projects.length ? projects : `
+    <div class="plain-project">
+      <p class="eyebrow">Coming soon</p>
+      <h3>${esc(E.title || "Projects are on the way")}</h3>
+      ${E.text ? `<p class="lead" style="margin:0 0 12px">${esc(E.text)}</p>` : ""}
+      ${gh ? `<div class="actions"><a class="btn" href="${esc(gh.url)}"${ext(gh.url)}>Visit my GitHub</a></div>` : ""}
+    </div>`;
+
   const contacts = (D.email ? [`<li><a href="mailto:${esc(D.email)}">Email<span>${esc(D.email)}</span></a></li>`] : [])
     .concat(D.socials.map((s) => `<li><a href="${esc(s.url)}"${ext(s.url)}>${esc(s.label)}<span>${esc(s.handle || "")}</span></a></li>`));
 
@@ -34,7 +45,7 @@
       <h2>About</h2>
       <div class="prose">${(o.bio || []).map((t) => `<p>${esc(t)}</p>`).join("")}</div>
       <h2>Projects</h2>
-      ${projects}
+      ${projectsHtml}
       <h2>Skills &amp; tools</h2>
       <dl class="plain-skills">${D.skills.map((g) => `<dt>${esc(g.group)}</dt><dd>${g.items.map(esc).join(", ")}</dd>`).join("")}</dl>
       <h2>Contact</h2>

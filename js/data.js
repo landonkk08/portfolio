@@ -21,8 +21,8 @@ window.PORTFOLIO = {
      Descriptions: under about 155. */
   meta: {
     title: "{name} · {role}",
-    // Update "game & software developer" here if your role changes.
-    description: "{name} is a game & software developer. Explore games, apps and design work in a portfolio built as a desktop OS you can click around.",
+    // Update "aspiring cybersecurity professional" here if your role changes.
+    description: "{name} is an aspiring cybersecurity professional. Explore projects, skills and experience in a portfolio built as a desktop OS you can click around.",
     // Browser tab title while a window is in front; {window} is its name.
     windowTitle: "{window} · {name}",
     pages: {
@@ -37,16 +37,16 @@ window.PORTFOLIO = {
   },
 
   owner: {
-    name: "Your Name",
-    role: "Game & Software Developer",
-    location: "City, Country",
+    name: "Landon Koch",
+    role: "Aspiring Cybersecurity Professional",
+    location: "Greater Chattanooga",
     // Path to a square photo or avatar, e.g. "assets/avatar.png".
     // Leave as null to show your initials instead.
     avatar: null,
     // Each string is one paragraph.
     bio: [
-      "Write a short introduction here: who you are, what you make and what you're interested in.",
-      "Add a second paragraph if you like, e.g. what you're learning right now or what kind of work you're looking for."
+      "I'm a student at the Tennessee BlueSky Institute, working toward a career in cybersecurity.",
+      "This site collects my projects and the skills I'm building along the way. Have a look around, and feel free to get in touch."
     ]
   },
 
@@ -56,18 +56,17 @@ window.PORTFOLIO = {
   resume: null,
 
   // Email shown in the Contact window. Use null to hide it.
-  email: "you@example.com",
+  email: "landon.kenneth.koch@gmail.com",
 
   socials: [
-    { label: "GitHub",   handle: "@your-username", url: "https://github.com/your-username" },
-    { label: "Roblox",   handle: "your-username",  url: "https://www.roblox.com/users/0/profile" },
-    { label: "LinkedIn", handle: "your-name",      url: "https://www.linkedin.com/in/your-name" }
+    { label: "GitHub",   handle: "@landonkk08",    url: "https://github.com/landonkk08" },
+    { label: "LinkedIn", handle: "Landon Koch",    url: "https://www.linkedin.com/in/landon-koch-754938437/" }
   ],
 
   skills: [
-    { group: "Languages",       items: ["Skill one", "Skill two", "Skill three"] },
-    { group: "Engines & tools", items: ["Tool one", "Tool two", "Tool three"] },
-    { group: "Design",          items: ["Tool one", "Tool two"] }
+    { group: "Tools",       items: ["Wireshark"] },
+    { group: "Systems",     items: ["Windows", "macOS"] },
+    { group: "Programming", items: ["Python", "HTML"] }
   ],
 
   // The Secret.app message (unlocked by clicking your name 5 times) isn't here:
@@ -76,94 +75,37 @@ window.PORTFOLIO = {
 
   projectsIntro: "A one-line intro to your work. Pick a filter or open a project for details.",
 
-  // The project shown in the "Featured" card on the desktop and phone home
-  // screen. Use a project's id from the list below. If it's missing or
-  // doesn't match, the first project is shown. Set to null to hide the card.
-  featured: "game-one",
+  // Shown in the Projects window and the plain view while `projects` below is
+  // empty, with a "Visit my GitHub" button if you have a GitHub link above.
+  projectsEmpty: {
+    title: "Projects are on the way",
+    text: "I'm working on my first cybersecurity projects. Check back soon, or follow along on GitHub."
+  },
 
-  /* Projects
-     category: "games" | "software" | "design"
-     image:    path to a cover image (16:10 works best), or null for a generated cover
-     color:    accent used on the generated cover
-     video:    optional YouTube link (any format), e.g. "https://www.youtube.com/watch?v=VIDEO_ID".
-               It's embedded in privacy-enhanced mode (youtube-nocookie.com).
-     gallery:  optional list of extra image paths
-     description: list of paragraphs                                          */
-  projects: [
+  // The project shown in the "Featured" card on the desktop and phone home
+  // screen. Use a project's id from the list below. If it doesn't match, the
+  // first project is shown. While it's null (or there are no projects), the
+  // card is hidden.
+  featured: null,
+
+  /* Projects. Empty for now: the Projects window shows `projectsEmpty` above.
+     To add one, copy this template inside the [ ] and fill it in:
+
     {
-      id: "game-one",
-      title: "Example Game One",
-      category: "games",
+      id: "my-project",              // short, unique, no spaces (used in links)
+      title: "My Project",
+      category: "software",          // "games" | "software" | "design"
       year: "2026",
-      role: "Solo developer",
-      summary: "One-line pitch for this game.",
-      description: [
-        "Describe the game: the genre, the core loop and what makes it fun.",
-        "Then explain what you built and what you learned along the way."
-      ],
-      tags: ["Tag", "Tag", "Tag"],
-      links: [{ label: "Play", url: "#" }, { label: "Source", url: "#" }],
-      image: null, color: "#FFB020", video: null, gallery: []
+      role: "Solo",
+      summary: "One-line description.",
+      description: ["A paragraph.", "Another paragraph."],
+      tags: ["Python", "Wireshark"],
+      links: [{ label: "GitHub", url: "https://github.com/landonkk08/my-project" }],
+      image: null,                   // e.g. "assets/projects/my-project.png" (16:10), or null for a generated cover
+      color: "#FFB020",              // accent for the generated cover
+      video: null,                   // optional YouTube link; embedded via youtube-nocookie.com
+      gallery: []                    // optional extra screenshot paths
     },
-    {
-      id: "game-two",
-      title: "Example Game Two",
-      category: "games",
-      year: "2025",
-      role: "Scripter",
-      summary: "One-line pitch for this game.",
-      description: ["Describe the project here."],
-      tags: ["Tag", "Tag"],
-      links: [{ label: "Play", url: "#" }],
-      image: null, color: "#FF6B5B", video: null, gallery: []
-    },
-    {
-      id: "app-one",
-      title: "Example App One",
-      category: "software",
-      year: "2026",
-      role: "Full-stack developer",
-      summary: "One-line description of what this app does.",
-      description: ["Describe the problem, your solution and the tech you used."],
-      tags: ["Tag", "Tag", "Tag"],
-      links: [{ label: "Live demo", url: "#" }, { label: "GitHub", url: "#" }],
-      image: null, color: "#4C8DFF", video: null, gallery: []
-    },
-    {
-      id: "app-two",
-      title: "Example App Two",
-      category: "software",
-      year: "2025",
-      role: "Developer",
-      summary: "One-line description of what this app does.",
-      description: ["Describe the project here."],
-      tags: ["Tag", "Tag"],
-      links: [{ label: "GitHub", url: "#" }],
-      image: null, color: "#2EC4A6", video: null, gallery: []
-    },
-    {
-      id: "design-one",
-      title: "Example Design One",
-      category: "design",
-      year: "2026",
-      role: "UI designer",
-      summary: "One-line description of this design.",
-      description: ["Describe the brief, your process and the outcome."],
-      tags: ["Tag", "Tag"],
-      links: [{ label: "View in Figma", url: "#" }],
-      image: null, color: "#A78BFA", video: null, gallery: []
-    },
-    {
-      id: "design-two",
-      title: "Example Design Two",
-      category: "design",
-      year: "2025",
-      role: "Designer",
-      summary: "One-line description of this design.",
-      description: ["Describe the project here."],
-      tags: ["Tag"],
-      links: [],
-      image: null, color: "#F2D04B", video: null, gallery: []
-    }
-  ]
+  */
+  projects: []
 };

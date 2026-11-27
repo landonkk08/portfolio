@@ -356,7 +356,21 @@
       <span class="cover-tag">${esc(catLabel(p.category))}</span><span class="cover-initial">${initial}</span></span>`;
   }
 
+  // Shown in the Projects window while `projects` in data.js is empty.
+  function emptyProjects() {
+    const E = D.projectsEmpty || {};
+    const gh = (D.socials || []).find((s) => /github/i.test(s.label));
+    return `
+      <div class="proj-empty">
+        <p class="eyebrow">Coming soon</p>
+        <h2 class="win-h">${esc(E.title || "Projects are on the way")}</h2>
+        ${E.text ? `<p class="lead">${esc(E.text)}</p>` : ""}
+        ${gh ? `<div class="actions"><a class="btn primary" href="${esc(gh.url)}" target="_blank" rel="noopener noreferrer">Visit my GitHub</a></div>` : ""}
+      </div>`;
+  }
+
   function renderProjects(body) {
+    if (!D.projects.length) { body.innerHTML = emptyProjects(); return; }
     const counts = {};
     D.projects.forEach((p) => { counts[p.category] = (counts[p.category] || 0) + 1; });
     const filters = [["all", "All", D.projects.length]].concat(

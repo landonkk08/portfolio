@@ -364,6 +364,9 @@ img { max-width: 100%; }
 }
 .win-h { margin: 0 0 12px; font-size: 34px; font-weight: 700; letter-spacing: -.035em; line-height: 1.05; }
 .lead { margin: 0 0 24px; max-width: 60ch; color: var(--muted); line-height: 1.6; }
+/* Projects window while there are no projects yet */
+.proj-empty { padding: 24px 0 8px; }
+.proj-empty .actions { margin-top: 0; }
 /* Body copy: a touch lighter and softer than headings, so headings lead. */
 .prose p, .policy p:not(.lead):not(.eyebrow), .policy li, .plain-project p:not(.eyebrow):not(.lead) {
   font-weight: 360; color: var(--text-body);

@@ -56,8 +56,16 @@
   <script src="../js/covers.js"></script>
   <script>
     const D = window.PORTFOLIO;
-    // First four projects, so the preview shows real cover patterns.
-    document.getElementById("tiles").innerHTML = D.projects.slice(0, 4).map((p) =>
+    // First four projects, so the preview shows real cover patterns. With fewer
+    // than four, untitled decorative tiles fill the rest.
+    const samples = [
+      { id: "tile-a", category: "software", color: "#FFB020" },
+      { id: "tile-b", category: "games",    color: "#38BDF8" },
+      { id: "tile-c", category: "design",   color: "#A78BFA" },
+      { id: "tile-d", category: "software", color: "#2EC4A6" }
+    ];
+    const tiles = D.projects.slice(0, 4).concat(samples).slice(0, 4);
+    document.getElementById("tiles").innerHTML = tiles.map((p) =>
       `<div class="tile" style="--c:${p.color || "#FFB020"}">${window.coverArt(p)}</div>`).join("");
     document.getElementById("os").textContent = D.osName;
     document.getElementById("name").textContent = D.owner.name;
