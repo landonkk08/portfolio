@@ -6,6 +6,7 @@
   --line: #24324D;
   --line-strong: #33456A;
   --text: #E6EAF2;
+  --text-body: #C8D0DE;     /* paragraphs: a little softer than headings */
   --muted: #8C98B0;
   --accent: #FFB020;        /* fills: buttons, highlights (set by js/settings.js) */
   --accent-ink: #1A1100;    /* text on top of --accent */
@@ -40,6 +41,7 @@
   --line: #D3DBE8;
   --line-strong: #B9C4D6;
   --text: #0B1220;
+  --text-body: #2A3650;
   --muted: #5A6780;
   --taskbar-bg: #F7F9FC;
   --hover: rgba(11, 18, 32, .06);
@@ -335,8 +337,12 @@ img { max-width: 100%; }
   margin: 0 0 8px; font-family: var(--font-mono); font-size: 11px;
   letter-spacing: .08em; text-transform: uppercase; color: var(--accent-text);
 }
-.win-h { margin: 0 0 10px; font-size: 30px; font-weight: 700; letter-spacing: -.025em; line-height: 1.1; }
+.win-h { margin: 0 0 12px; font-size: 34px; font-weight: 700; letter-spacing: -.035em; line-height: 1.05; }
 .lead { margin: 0 0 24px; max-width: 60ch; color: var(--muted); line-height: 1.6; }
+/* Body copy: a touch lighter and softer than headings, so headings lead. */
+.prose p, .policy p:not(.lead):not(.eyebrow), .policy li, .plain-project p:not(.eyebrow):not(.lead) {
+  font-weight: 360; color: var(--text-body);
+}
 .prose p { margin: 0 0 14px; max-width: 65ch; line-height: 1.7; }
 .section-h {
   margin: 28px 0 12px; font-family: var(--font-mono); font-size: 11px; font-weight: 500;
@@ -542,7 +548,7 @@ img { max-width: 100%; }
   .win-btn.close .x { display: none; }
   .win-btn.close .back { display: flex; align-items: center; gap: 2px; font-size: 14px; font-weight: 500; }
   .window-body { padding: 22px 20px calc(32px + env(safe-area-inset-bottom)); }
-  .win-h { font-size: 26px; }
+  .win-h { font-size: 28px; }
   .detail-cover .cover-initial { font-size: 80px; }
   .video-gate-cover .cover-initial { font-size: 64px; left: 16px; bottom: 10px; }
 }
@@ -555,7 +561,7 @@ body.plain { overflow: auto; }
 .plain h1 { margin: 0; font-size: clamp(40px, 8vw, 64px); letter-spacing: -.04em; line-height: 1; }
 .plain h2 { margin: 56px 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .plain-project { padding: 20px 0; border-bottom: 1px solid var(--line); }
-.plain-project h3 { margin: 6px 0 6px; font-size: 22px; letter-spacing: -.01em; }
+.plain-project h3 { margin: 6px 0 6px; font-size: 24px; font-weight: 700; letter-spacing: -.025em; line-height: 1.15; }
 .plain-project .actions { margin-top: 16px; }
 .plain-project .tags { margin-top: 12px; }
 .plain-skills dt { margin-top: 14px; font-weight: 600; }
