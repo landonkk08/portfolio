@@ -61,6 +61,8 @@
     shortcuts: { title: "Keyboard shortcuts", icon: "keyboard", w: 460, h: 600, render: renderShortcuts },
     secret: { title: "Secret.app", icon: "unlock", w: 440, h: 440, render: renderSecret }
   };
+  // No resume path in data.js → no Resume window, icon, menu entry or shortcut.
+  if (!D.resume) delete APPS.resume;
   const DESKTOP = [
     { app: "projects", label: "Projects" },
     { app: "about", label: "About me" },
@@ -69,7 +71,7 @@
     { app: "resume", label: "Resume" },
     { app: "settings", label: "Settings" },
     { href: "plain.html", label: "Plain view", icon: "list" }
-  ];
+  ].filter((it) => !it.app || APPS[it.app]);
 
   function getApp(id) {
     if (APPS[id]) return APPS[id];
@@ -606,7 +608,17 @@
         </div>
       </div>
 
-      <div class="actions"><button type="button" class="btn" data-reset data-quiet>Reset to defaults</button></div>`;
+      <div class="actions reset-row">
+        <button type="button" class="btn" data-reset data-quiet>Reset to defaults</button>
+        <span class="reset-note" role="status" aria-live="polite"></span>
+      </div>`;
+    const note = $(".reset-note", body);
+    let noteTimer = 0, beforeReset = null;
+    const showNote = (html, ms) => {
+      clearTimeout(noteTimer);
+      note.innerHTML = html;
+      noteTimer = setTimeout(() => { note.textContent = ""; beforeReset = null; }, ms);
+    };
 
     const sync = () => {
       ["theme", "accent", "wallpaper"].forEach((k) => {
@@ -634,7 +646,20 @@
         S.set(key, next);
         if (key !== "sound" || next) sound("toggle");
       }
-      if (e.target.closest("[data-reset]")) { S.reset(); sound("toggle"); }
+      if (e.target.closest("[data-reset]")) {
+        beforeReset = S.all();
+        S.reset();
+        sound("toggle");
+        showNote(`Settings reset. <button type="button" class="link-btn" data-undo data-quiet>Undo</button>`, 8000);
+      }
+      if (e.target.closest("[data-undo]") && beforeReset) {
+        const undoBtn = e.target.closest("[data-undo]");
+        S.restore(beforeReset);
+        sound("toggle");
+        showNote("Settings restored.", 3000);
+        beforeReset = null;
+        if (document.activeElement === undoBtn || !body.contains(document.activeElement)) $("[data-reset]", body).focus();
+      }
     });
   }
 
@@ -653,7 +678,7 @@
     { code: "BracketRight", key: "]", action: "next", label: "Next window" },
     { code: "KeyM", key: "M", action: "minimize", label: "Minimize window" },
     { code: "Slash", key: "/", app: "shortcuts", label: "Show this list" }
-  ];
+  ].filter((s) => !s.app || APPS[s.app]);
 
   function cycleWindows(step) {
     const ids = [...wins.keys()];

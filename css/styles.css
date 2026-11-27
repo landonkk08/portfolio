@@ -346,6 +346,14 @@ img { max-width: 100%; }
   text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
 }
 .no-motion .video-play { transition: none; }
+
+/* Settings: "Settings reset. Undo" next to the reset button */
+.reset-row { align-items: center; }
+.reset-note { font-size: 13px; color: var(--muted); }
+.link-btn {
+  padding: 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--accent-text);
+  text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
 .gallery img { display: block; width: 100%; border-radius: var(--r-sm); border: 1px solid var(--line); }
 
@@ -679,10 +687,12 @@ button.task-plain { border: 0; background: none; cursor: pointer; }
 @media (max-width: 767px) {
   .phone-footer {
     display: flex; justify-content: center; gap: 8px;
-    position: absolute; left: 0; right: 0; bottom: calc(14px + env(safe-area-inset-bottom));
+    position: absolute; left: 0; right: 0; bottom: calc(4px + env(safe-area-inset-bottom));
   }
+  /* 44px tall so they're easy to tap */
   .phone-footer button {
-    padding: 8px 12px; border: 0; background: none; cursor: pointer;
+    display: inline-flex; align-items: center; min-height: 44px; min-width: 44px;
+    padding: 0 14px; border: 0; background: none; cursor: pointer;
     font-family: var(--font-mono); font-size: 12px; color: var(--muted);
   }
 }

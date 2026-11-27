@@ -28,7 +28,7 @@ A portfolio site styled as a custom desktop operating system. It uses plain HTML
 
 1. Open `js/data.js` and replace each placeholder.
 2. Put images in an `assets/` folder, e.g. `assets/projects/my-game.png`, and set `image: "assets/projects/my-game.png"`. A 16:10 ratio works best. With `image: null` the site shows a generated cover.
-3. Save your resume as `assets/resume.pdf`.
+3. Save your resume as `assets/resume.pdf`, then set `resume: "assets/resume.pdf"` in `js/data.js`. While it's `null`, the Resume icon, window, menu entry, Alt+R shortcut, `#resume` link and plain-view link are hidden, so visitors never hit a missing file.
 4. Optional: add `video: "https://www.youtube.com/watch?v=VIDEO_ID"` to a project to show a clip in place of the cover. Any YouTube link format works, and it's embedded in privacy-enhanced mode (youtube-nocookie.com).
 
    Videos are **click-to-load**, which is the site's cookie consent: the project's cover shows with a play button and a note that the video plays from YouTube, and nothing is fetched from YouTube until the visitor clicks Play. After one click, other videos load straight away until the tab is closed. That's why the site needs no cookie banner. If you ever add analytics or another service that sets cookies, you'd need to ask for consent before it loads.
@@ -52,6 +52,7 @@ Visitors can change the theme (System, Light or Dark), the accent color, the wal
 - The theme follows the visitor's device until they pick one.
 - Motion follows their device's "reduce motion" setting until they change it.
 - Sounds are on by default, but browsers keep pages silent until the first click or key press.
+- **Reset to defaults** acts straight away, then shows "Settings reset. Undo" for 8 seconds.
 - To change the accent presets, edit `ACCENTS` in `js/settings.js`. `onLight` is a darker version of the color, used for text on the light theme.
 
 ## Keyboard shortcuts
@@ -60,7 +61,7 @@ Hold **Alt** (**⌥ Option** on Mac) and press a key. **Alt+/** shows the full l
 
 | Keys | Action |
 |---|---|
-| Alt+P, A, S, C, R | Open Projects, About me, Skills, Contact, Resume |
+| Alt+P, A, S, C, R | Open Projects, About me, Skills, Contact, Resume (R only once a resume is set) |
 | Alt+, | Open Settings |
 | Alt+[ and Alt+] | Previous / next window |
 | Alt+M | Minimize the front window |

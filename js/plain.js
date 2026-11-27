@@ -24,7 +24,7 @@
   document.getElementById("plain").innerHTML = `
     <div class="plain-top">
       <a href="index.html">← Back to the desktop</a>
-      <a href="${esc(D.resume)}" download>Download resume</a>
+      ${D.resume ? `<a href="${esc(D.resume)}" download>Download resume</a>` : ""}
     </div>
     <header>
       <h1>${esc(o.name)}</h1>

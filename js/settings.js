@@ -76,13 +76,22 @@
     emit();
   }
 
+  // Put back a copy taken with all(), e.g. to undo a reset.
+  function restore(saved) {
+    s = { ...DEFAULTS, ...saved };
+    save();
+    apply();
+    emit();
+  }
+
   mqDark.addEventListener("change", () => { if (s.theme === "system") { apply(); emit(); } });
   mqReduce.addEventListener("change", () => { if (s.motion === null) { apply(); emit(); } });
 
   window.OS_SETTINGS = {
     ACCENTS, WALLPAPERS,
     get: (key) => s[key],
-    set, reset, theme, motion,
+    all: () => ({ ...s }),
+    set, reset, restore, theme, motion,
     onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); }
   };
 
