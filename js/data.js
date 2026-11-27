@@ -7,7 +7,7 @@
 
 window.PORTFOLIO = {
   // Name of your OS. Shown on the boot screen and in the taskbar.
-  osName: "YourOS",
+  osName: "Lantern OS",
 
   // Where the site lives once GitHub Pages is on. Shown on the link-preview image.
   siteUrl: "https://landonkk08.github.io/portfolio/",
