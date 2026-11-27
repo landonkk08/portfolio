@@ -136,6 +136,11 @@ The same script, `node tools/update-meta.mjs`, also writes two files from `siteU
 - **`sitemap.xml`** lists the four public pages: the desktop, plain view, privacy policy and terms. `404.html` is left out.
 - **`robots.txt`** lets every crawler in, blocks the `tools/` folder, and points to the sitemap.
 
+It also writes into the pages themselves:
+
+- **Canonical tags** (`<link rel="canonical">`) on the desktop, plain view, privacy and terms pages, so search engines treat `/portfolio/` and `/portfolio/index.html` as one page. It updates `og:url` to match.
+- **Structured data** on `index.html`: a JSON-LD "Person" block with your name, role, site URL, location and the links in `socials`. Check it with Google's [Rich Results Test](https://search.google.com/test/rich-results) once the site is live.
+
 **While the site lives in a subfolder** (like `https://<your-username>.github.io/portfolio/`), search engines don't read `robots.txt`: they only look for it at the root of the domain. The script warns about this. The file is kept so it works as soon as the site moves to the root, either with your own domain or by renaming the repository to `<your-username>.github.io`. If you rename it, also update `siteUrl` and `repo` in `404.html` (see above), then run the script.
 
 Until then, tell Google about the sitemap yourself:
