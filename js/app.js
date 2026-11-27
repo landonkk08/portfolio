@@ -53,7 +53,7 @@
     about: { title: "About me", icon: "user", w: 560, h: 520, render: renderAbout },
     skills: { title: "Skills & tools", icon: "skills", w: 560, h: 480, render: renderSkills },
     contact: { title: "Contact", icon: "mail", w: 460, h: 460, render: renderContact },
-    resume: { title: "Resume.pdf", icon: "file", w: 440, h: 320, render: renderResume },
+    resume: { title: "Resume.pdf", icon: "file", w: 720, h: 900, render: renderResume },
     settings: { title: "Settings", icon: "gear", w: 600, h: 640, render: renderSettings },
     privacy: { title: "Privacy policy", icon: "shield", w: 600, h: 620, render: (b) => window.renderPrivacy(b, "h3") },
     terms: { title: "Terms and conditions", icon: "terms", w: 600, h: 620, render: (b) => window.renderTerms(b, "h3") },
@@ -614,15 +614,28 @@
       <ul class="contact-list">${items.join("")}</ul>`;
   }
 
+  // The resume opens in the browser's own PDF viewer. Phones (and browsers
+  // without a built-in viewer) can't show PDFs inline, so they get the
+  // Download / Open buttons instead.
   function renderResume(body) {
+    const file = D.resume.split("/").pop();
+    const download = `<a class="btn primary" href="${esc(D.resume)}" download>${svg("download")}Download resume</a>`;
+    const open = `<a class="btn" href="${esc(D.resume)}" target="_blank" rel="noopener">${svg("external")}Open in new tab</a>`;
+    if (phone.matches || navigator.pdfViewerEnabled === false) {
+      body.innerHTML = `
+        <p class="eyebrow">PDF</p>
+        <h2 class="win-h">Resume</h2>
+        <p class="lead">My experience, education and skills on one page.</p>
+        <div class="actions">${download}${open}</div>`;
+      return;
+    }
+    body.classList.add("pdf-body");
     body.innerHTML = `
-      <p class="eyebrow">PDF</p>
-      <h2 class="win-h">Resume</h2>
-      <p class="lead">My experience, education and skills on one page.</p>
-      <div class="actions">
-        <a class="btn primary" href="${esc(D.resume)}" download>${svg("download")}Download resume</a>
-        <a class="btn" href="${esc(D.resume)}" target="_blank" rel="noopener">${svg("external")}Open in new tab</a>
-      </div>`;
+      <div class="pdf-bar">
+        <span class="pdf-name">${esc(file)}</span>
+        <div class="pdf-actions">${download}${open}</div>
+      </div>
+      <iframe class="pdf-frame" src="${esc(D.resume)}#navpanes=0&amp;view=FitH" title="${esc(D.owner.name)}'s resume (PDF)"></iframe>`;
   }
 
   function renderSettings(body) {
@@ -1049,6 +1062,14 @@
     if (!h || h === "secret") return; // the secret can't be deep-linked
     openWin(h.startsWith("project/") ? "project:" + h.slice(8) : h);
   }
+
+  // Clicks inside an embedded frame (the resume PDF, a video) never reach the
+  // page, but the page loses focus to it: bring that frame's window forward.
+  window.addEventListener("blur", () => setTimeout(() => {
+    const frame = document.activeElement;
+    if (!frame || frame.tagName !== "IFRAME") return;
+    for (const [id, w] of wins) if (w.el.contains(frame)) { focusWin(id); break; }
+  }, 0));
 
   // Hover glow on project cards and the featured card: a soft spotlight in
   // the project's color that follows the mouse (CSS reads --mx / --my).

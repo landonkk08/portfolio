@@ -287,6 +287,19 @@ img { max-width: 100%; }
 .win-btn svg { width: 14px; height: 14px; }
 .win-btn .back { display: none; }
 .window-body { flex: 1; overflow: auto; padding: 28px; overscroll-behavior: contain; }
+/* Resume window: a slim toolbar above the browser's PDF viewer */
+.window-body.pdf-body { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.pdf-bar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 10px 12px 10px 16px; border-bottom: 1px solid var(--line);
+}
+.pdf-name {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-family: var(--font-mono); font-size: 13px; color: var(--muted);
+}
+.pdf-actions { display: flex; gap: 8px; }
+.pdf-actions .btn { height: 34px; padding: 0 12px; font-size: 13px; }
+.pdf-frame { flex: 1; width: 100%; border: 0; background: var(--surface-2); }
 
 /* ============ Taskbar & launcher ============ */
 .taskbar {
