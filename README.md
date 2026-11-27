@@ -27,7 +27,7 @@ A portfolio site styled as a custom desktop operating system. It uses plain HTML
 ## Adding your content
 
 1. Open `js/data.js` and replace each placeholder.
-2. Put images in an `assets/` folder, e.g. `assets/projects/my-game.png`, and set `image: "assets/projects/my-game.png"`. A 16:10 ratio works best. With `image: null` the site shows a generated cover.
+2. Put images in an `assets/` folder, e.g. `assets/projects/my-game.png`, and set `image: "assets/projects/my-game.png"`. A 16:10 ratio works best. With `image: null` the site shows a generated cover in the project's `color`: pixel tiles for games, code lines for software and overlapping shapes for design, behind the project's first letter. Each project's pattern is different but always the same for that project (it's based on the `id`), so changing a project's `id` reshuffles its pattern. The patterns are drawn in `PATTERNS` in `js/app.js`.
 3. Pick your best project for the **Featured** card with `featured: "project-id"` in `js/data.js`. The card sits at the top-right of the desktop and below the icons on phones, and clicking it opens that project. If the id doesn't match, the first project is shown; `featured: null` hides the card. On short desktop screens (under 620px tall) it's left out so it doesn't crowd your name.
 4. Save your resume as `assets/resume.pdf`, then set `resume: "assets/resume.pdf"` in `js/data.js`. While it's `null`, the Resume icon, window, menu entry, Alt+R shortcut, `#resume` link and plain-view link are hidden, so visitors never hit a missing file.
 5. Optional: add `video: "https://www.youtube.com/watch?v=VIDEO_ID"` to a project to show a clip in place of the cover. Any YouTube link format works, and it's embedded in privacy-enhanced mode (youtube-nocookie.com).
