@@ -45,7 +45,7 @@ window.PORTFOLIO = {
     avatar: null,
     // Each string is one paragraph.
     bio: [
-      "I'm a student at the Tennessee BlueSky Institute, working toward a career in cybersecurity.",
+      "I'm a student at the BlueSky Tennessee Institute, working toward a career in cybersecurity.",
       "This site collects my projects and the skills I'm building along the way. Have a look around, and feel free to get in touch."
     ]
   },
