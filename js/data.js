@@ -53,7 +53,7 @@ window.PORTFOLIO = {
   // Path to your resume PDF, e.g. "assets/resume.pdf". While it's null, the
   // Resume icon, window, menu entry, shortcut and plain-view link are hidden.
   // Put the PDF in assets/, then set the path here to show them.
-  resume: null,
+  resume: "assets/Landon-Koch-Resume.pdf",
 
   // Email shown in the Contact window. Use null to hide it.
   email: "landon.kenneth.koch@gmail.com",
