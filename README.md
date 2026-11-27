@@ -46,6 +46,8 @@ Then visit http://localhost:8080.
 
 The boot screen plays once per browser tab. Close the tab or clear session storage to see it again.
 
+As the boot screen fades, the desktop **reveals** itself in about 1.2 seconds: the wallpaper fades in, the icons drop in one by one, your name types itself with an amber block cursor, then your role, the featured card and the taskbar slide in. Any click, tap or key press finishes it instantly (and still does what it normally would). It only plays after the boot screen, never on reloads, and not at all when motion is off. The timings are in `reveal()` in `js/app.js`.
+
 ## Settings app
 
 Visitors can change the theme (System, Light or Dark), the accent color, the wallpaper, motion and sounds. Choices are saved in their browser.

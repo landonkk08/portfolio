@@ -121,6 +121,14 @@ img { max-width: 100%; }
   margin: 0; font-size: clamp(40px, 6vw, 88px); font-weight: 700;
   letter-spacing: -.045em; line-height: .95;
 }
+/* Typing effect in the desktop reveal (app.js). The cursor takes no space. */
+.type-rest { visibility: hidden; }
+.type-cursor {
+  display: inline-block; width: .42em; height: .78em; margin-right: -.42em;
+  vertical-align: -.02em; background: var(--accent); border-radius: 2px;
+  animation: type-blink .9s steps(1) infinite;
+}
+@keyframes type-blink { 50% { opacity: 0; } }
 .hello-role {
   margin: 14px 0 0; font-family: var(--font-mono); font-size: 13px;
   color: var(--accent-text); letter-spacing: .04em;

@@ -980,11 +980,80 @@
       el.classList.add("done");
       setTimeout(() => el.remove(), 450);
       sound("chime"); // only audible if the visitor clicked or pressed a key to skip
+      reveal();
       done();
     };
     const timer = setTimeout(finish, total);
     el.addEventListener("click", finish);
     addEventListener("keydown", finish);
+  }
+
+  /* ---------- Desktop reveal (once, as the boot screen fades) ----------
+     About 1.2s: wallpaper fades in, icons drop in one by one, the name types
+     itself with a block cursor, then the role, featured card and taskbar
+     arrive. Any click or key press jumps to the end (and still works as
+     normal). Skipped entirely when motion is off. */
+  function reveal() {
+    if (!S.motion() || !document.body.animate) return;
+    const anims = [];
+    const ease = EASE_OUT;
+    const play = (el, frames, delay, duration) => {
+      if (!el) return;
+      anims.push(el.animate(frames, { duration, delay, easing: ease, fill: "backwards" }));
+    };
+    const fade = [{ opacity: 0 }, { opacity: 1 }];
+    const rise = (px) => [{ opacity: 0, transform: `translateY(${px}px)` }, { opacity: 1, transform: "none" }];
+
+    play($("#wallpaper"), fade, 0, 500);
+    play($(".statusbar"), fade, 100, 400);
+    $$("#icons li").forEach((li, i) => play(li, rise(-10), 100 + i * 40, 300));
+
+    // Name: typed one letter at a time, then the cursor blinks briefly and goes.
+    const nameEl = $(".hello-name");
+    const name = D.owner.name;
+    const perChar = Math.min(45, 600 / Math.max(1, name.length));
+    const typeStart = 250, typeEnd = typeStart + perChar * name.length;
+    nameEl.setAttribute("aria-label", name);
+    // The untyped rest stays in place but invisible, so the name never shifts.
+    nameEl.innerHTML = `<span class="type-text"></span><span class="type-cursor" aria-hidden="true"></span><span class="type-rest">${esc(name)}</span>`;
+    const textEl = $(".type-text", nameEl), restEl = $(".type-rest", nameEl);
+    let typed = 0, typer = 0, cursorTimer = 0;
+    const startTyping = setTimeout(() => {
+      typer = setInterval(() => {
+        typed++;
+        textEl.textContent = name.slice(0, typed);
+        restEl.textContent = name.slice(typed);
+        if (typed >= name.length) clearInterval(typer);
+      }, perChar);
+    }, typeStart);
+
+    play($(".hello-role"), rise(6), typeEnd, 300);
+    play($("#featured"), rise(12), typeEnd, 350);
+    play($(".taskbar"), [{ transform: "translateY(100%)" }, { transform: "none" }], typeEnd + 50, 350);
+    play($(".phone-footer"), fade, typeEnd + 50, 350);
+
+    const cleanUpName = () => { nameEl.textContent = name; nameEl.removeAttribute("aria-label"); };
+    cursorTimer = setTimeout(cleanUpName, typeEnd + 500);
+
+    // Skip: the first click, tap or key press after the boot screen finishes it.
+    const skip = () => {
+      removeEventListener("pointerdown", skip, true);
+      removeEventListener("keydown", skip, true);
+      clearTimeout(startTyping); clearInterval(typer); clearTimeout(cursorTimer);
+      anims.forEach((a) => { try { a.finish(); } catch (_) { /* already done */ } });
+      cleanUpName();
+    };
+    // Added after this tick, so the click or key that skipped the boot screen
+    // doesn't also skip the reveal.
+    setTimeout(() => {
+      addEventListener("pointerdown", skip, true);
+      addEventListener("keydown", skip, true);
+    }, 0);
+    // Stop listening once it has played through.
+    setTimeout(() => {
+      removeEventListener("pointerdown", skip, true);
+      removeEventListener("keydown", skip, true);
+    }, typeEnd + 600);
   }
 
   /* ---------- Deep links: #projects, #about, #project/<id> ---------- */
