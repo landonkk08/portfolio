@@ -299,6 +299,18 @@ img { max-width: 100%; }
 .task-plain:hover { color: var(--text); background: var(--surface); }
 .clock { font-family: var(--font-mono); font-size: 12px; color: var(--muted); padding: 0 8px; font-variant-numeric: tabular-nums; }
 
+/* Dock style on wide screens: open-window buttons centered on the screen,
+   each with a round "running" dot (a wider accent pill for the front window). */
+@media (min-width: 1200px) {
+  .task-list {
+    position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
+    align-items: center; max-width: calc(100% - 680px); justify-content: safe center;
+  }
+  .task-list + .task-plain { margin-left: auto; } /* keep the links and clock on the right */
+  .task::after { width: 4px; height: 4px; bottom: 1px; border-radius: 4px; }
+  .task.is-active::after { width: 14px; }
+}
+
 .launcher {
   position: fixed; left: 10px; bottom: calc(var(--taskbar-h) + 8px); z-index: 4000;
   width: 300px; padding: 8px;

@@ -209,6 +209,13 @@
     win.el.style.zIndex = ++z;
     win.el.classList.add("is-focused");
     win.task.classList.add("is-active");
+    // With many windows the taskbar list scrolls; keep the front one in view.
+    const list = win.task.parentElement;
+    if (list && list.scrollWidth > list.clientWidth) {
+      const t = win.task.offsetLeft, w = win.task.offsetWidth;
+      if (t < list.scrollLeft) list.scrollLeft = t - 8;
+      else if (t + w > list.scrollLeft + list.clientWidth) list.scrollLeft = t + w - list.clientWidth + 8;
+    }
     setTabTitle(getApp(id).title);
   }
 
