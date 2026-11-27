@@ -354,6 +354,20 @@ img { max-width: 100%; }
 }
 .card:hover { border-color: var(--accent); transform: translateY(-2px); }
 .card-body { display: block; padding: 14px 16px 16px; }
+
+/* Hover glow: a soft spotlight in the project's color that follows the mouse
+   (position set by app.js). Mouse only; off when motion is off. */
+.card, .featured-card { position: relative; }
+.card::after, .featured-card::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--glow, var(--accent)) 16%, transparent), transparent 70%);
+  opacity: 0; transition: opacity .2s var(--ease);
+}
+@media (hover: hover) {
+  .card:hover::after, .featured-card:hover::after { opacity: 1; }
+}
+.no-motion .card::after, .no-motion .featured-card::after { display: none; }
 .card-title { display: block; margin-bottom: 4px; font-size: 16px; font-weight: 600; }
 .card-meta { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .card-summary { display: block; margin-top: 8px; font-size: 13px; line-height: 1.5; color: var(--muted); }

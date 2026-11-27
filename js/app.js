@@ -403,7 +403,7 @@
     const draw = (cat) => {
       grid.innerHTML = D.projects
         .filter((p) => cat === "all" || p.category === cat)
-        .map((p) => `<li><button class="card" type="button" data-id="${esc(p.id)}">
+        .map((p) => `<li><button class="card" type="button" data-id="${esc(p.id)}" style="--glow:${esc(p.color || "#FFB020")}">
             ${cover(p)}
             <span class="card-body">
               <span class="card-title">${esc(p.title)}</span>
@@ -870,7 +870,7 @@
     if (!box || D.featured === null || !D.projects.length) return;
     const p = D.projects.find((x) => x.id === D.featured) || D.projects[0];
     box.innerHTML = `
-      <button class="featured-card" type="button">
+      <button class="featured-card" type="button" style="--glow:${esc(p.color || "#FFB020")}">
         ${cover(p, "featured-cover")}
         <span class="featured-body">
           <span class="featured-eyebrow">Featured project</span>
@@ -1062,6 +1062,17 @@
     if (!h || h === "secret") return; // the secret can't be deep-linked
     openWin(h.startsWith("project/") ? "project:" + h.slice(8) : h);
   }
+
+  // Hover glow on project cards and the featured card: a soft spotlight in
+  // the project's color that follows the mouse (CSS reads --mx / --my).
+  document.addEventListener("pointermove", (e) => {
+    if (e.pointerType !== "mouse") return;
+    const card = e.target.closest && e.target.closest(".card, .featured-card");
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty("--mx", e.clientX - r.left + "px");
+    card.style.setProperty("--my", e.clientY - r.top + "px");
+  }, { passive: true });
 
   fillText();
   buildDesktop();
