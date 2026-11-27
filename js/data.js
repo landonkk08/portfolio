@@ -76,6 +76,11 @@ window.PORTFOLIO = {
 
   projectsIntro: "A one-line intro to your work. Pick a filter or open a project for details.",
 
+  // The project shown in the "Featured" card on the desktop and phone home
+  // screen. Use a project's id from the list below. If it's missing or
+  // doesn't match, the first project is shown. Set to null to hide the card.
+  featured: "game-one",
+
   /* Projects
      category: "games" | "software" | "design"
      image:    path to a cover image (16:10 works best), or null for a generated cover

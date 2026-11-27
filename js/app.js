@@ -795,6 +795,39 @@
       : `<button class="${cls}" type="button" data-open="${item.app}">${inner}</button>`;
   }
 
+  // "Featured" card: the project picked by `featured` in data.js, pinned to
+  // the top-right of the desktop (below the icons on phones).
+  function buildFeatured() {
+    const box = $("#featured");
+    if (!box || D.featured === null || !D.projects.length) return;
+    const p = D.projects.find((x) => x.id === D.featured) || D.projects[0];
+    box.innerHTML = `
+      <button class="featured-card" type="button">
+        ${cover(p, "featured-cover")}
+        <span class="featured-body">
+          <span class="featured-eyebrow">Featured project</span>
+          <span class="featured-title">${esc(p.title)}</span>
+          <span class="featured-meta">${esc(catLabel(p.category))} · ${esc(p.year)}</span>
+          <span class="featured-summary">${esc(p.summary)}</span>
+          <span class="featured-open">Open project${svg("next")}</span>
+        </span>
+      </button>`;
+    box.hidden = false;
+    const card = $(".featured-card", box);
+    card.addEventListener("click", () => {
+      openWin("project:" + p.id, $(".cover", card).getBoundingClientRect());
+    });
+
+    // On phones the card sits in the page under the icons, wherever they end.
+    const icons = $("#icons");
+    const place = () => {
+      box.style.top = phone.matches ? icons.offsetTop + icons.offsetHeight + 12 + "px" : "";
+    };
+    place();
+    phone.addEventListener("change", place);
+    if (window.ResizeObserver) new ResizeObserver(place).observe(icons);
+  }
+
   function buildDesktop() {
     const icons = $("#icons");
     icons.innerHTML = DESKTOP.map((it) => `<li>${itemHTML(it, "icon")}</li>`).join("");
@@ -895,6 +928,7 @@
 
   fillText();
   buildDesktop();
+  buildFeatured();
   boot(openFromHash);
   addEventListener("hashchange", openFromHash);
 })();

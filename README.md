@@ -28,8 +28,9 @@ A portfolio site styled as a custom desktop operating system. It uses plain HTML
 
 1. Open `js/data.js` and replace each placeholder.
 2. Put images in an `assets/` folder, e.g. `assets/projects/my-game.png`, and set `image: "assets/projects/my-game.png"`. A 16:10 ratio works best. With `image: null` the site shows a generated cover.
-3. Save your resume as `assets/resume.pdf`, then set `resume: "assets/resume.pdf"` in `js/data.js`. While it's `null`, the Resume icon, window, menu entry, Alt+R shortcut, `#resume` link and plain-view link are hidden, so visitors never hit a missing file.
-4. Optional: add `video: "https://www.youtube.com/watch?v=VIDEO_ID"` to a project to show a clip in place of the cover. Any YouTube link format works, and it's embedded in privacy-enhanced mode (youtube-nocookie.com).
+3. Pick your best project for the **Featured** card with `featured: "project-id"` in `js/data.js`. The card sits at the top-right of the desktop and below the icons on phones, and clicking it opens that project. If the id doesn't match, the first project is shown; `featured: null` hides the card. On short desktop screens (under 620px tall) it's left out so it doesn't crowd your name.
+4. Save your resume as `assets/resume.pdf`, then set `resume: "assets/resume.pdf"` in `js/data.js`. While it's `null`, the Resume icon, window, menu entry, Alt+R shortcut, `#resume` link and plain-view link are hidden, so visitors never hit a missing file.
+5. Optional: add `video: "https://www.youtube.com/watch?v=VIDEO_ID"` to a project to show a clip in place of the cover. Any YouTube link format works, and it's embedded in privacy-enhanced mode (youtube-nocookie.com).
 
    Videos are **click-to-load**, which is the site's cookie consent: the project's cover shows with a play button and a note that the video plays from YouTube, and nothing is fetched from YouTube until the visitor clicks Play. After one click, other videos load straight away until the tab is closed. That's why the site needs no cookie banner. If you ever add analytics or another service that sets cookies, you'd need to ask for consent before it loads.
 
