@@ -162,7 +162,8 @@
           <span class="x">${svg("close")}</span><span class="back">${svg("back")}Back</span>
         </button>
       </header>
-      <div class="window-body"></div>`;
+      <div class="window-body"></div>
+      <span class="win-resize" aria-hidden="true"></span>`;
 
     const area = layer.getBoundingClientRect();
     const w = Math.min(app.w, area.width - 40);
@@ -195,6 +196,7 @@
     el.addEventListener("pointerdown", () => focusWin(id));
     el.addEventListener("focusin", () => focusWin(id));
     makeDraggable(id, el, $(".titlebar", el));
+    makeResizable(el, $(".win-resize", el));
 
     sound("open");
     zoomIn(el, from);
@@ -287,6 +289,33 @@
     const win = wins.get(id);
     const on = win.el.classList.toggle("is-max");
     $(".max", win.el).setAttribute("aria-label", `${on ? "Restore" : "Maximize"} ${getApp(id).title}`);
+  }
+
+  // Bottom-right grip: drag to resize, within the CSS min sizes and the desktop.
+  function makeResizable(el, grip) {
+    grip.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0 || phone.matches || el.classList.contains("is-max")) return;
+      e.preventDefault();
+      const area = layer.getBoundingClientRect();
+      const cs = getComputedStyle(el);
+      const minW = parseFloat(cs.minWidth) || 320, minH = parseFloat(cs.minHeight) || 220;
+      const sx = e.clientX, sy = e.clientY, ow = el.offsetWidth, oh = el.offsetHeight;
+      grip.setPointerCapture(e.pointerId);
+      el.classList.add("is-resizing");
+      const move = (ev) => {
+        el.style.width = clamp(ow + ev.clientX - sx, minW, area.width - el.offsetLeft) + "px";
+        el.style.height = clamp(oh + ev.clientY - sy, minH, area.height - el.offsetTop) + "px";
+      };
+      const up = () => {
+        el.classList.remove("is-resizing");
+        grip.removeEventListener("pointermove", move);
+        grip.removeEventListener("pointerup", up);
+        grip.removeEventListener("pointercancel", up);
+      };
+      grip.addEventListener("pointermove", move);
+      grip.addEventListener("pointerup", up);
+      grip.addEventListener("pointercancel", up);
+    });
   }
 
   function makeDraggable(id, el, handle) {
@@ -821,7 +850,8 @@
         <div class="prose" aria-live="polite"></div>
         <p class="secret-foot">Keep it between us.</p>
       </div>`;
-    decryptSecret().then((s) => {
+    body.classList.add("is-busy");
+    decryptSecret().finally(() => body.classList.remove("is-busy")).then((s) => {
       $(".win-h", body).textContent = s.title;
       $(".prose", body).innerHTML = s.message.map((t) => `<p>${esc(t)}</p>`).join("");
     }).catch(() => {

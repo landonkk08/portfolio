@@ -98,7 +98,7 @@ img { max-width: 100%; }
 .boot {
   position: fixed; inset: 0; z-index: 5000;
   display: grid; place-items: center;
-  background: var(--bg); cursor: pointer;
+  background: var(--bg); cursor: progress; /* busy, but a click still skips it */
   transition: opacity .4s var(--ease);
 }
 .boot.done { opacity: 0; pointer-events: none; }
@@ -209,7 +209,7 @@ img { max-width: 100%; }
   min-width: 320px; min-height: 220px; max-width: 100%; max-height: 100%;
   background: var(--surface); border: 1px solid var(--line);
   border-radius: var(--r-lg); box-shadow: var(--shadow);
-  overflow: hidden; resize: both;
+  overflow: hidden;
   animation: win-in .2s var(--ease);
 }
 .window { transform-origin: 0 0; }
@@ -224,6 +224,25 @@ img { max-width: 100%; }
   background: var(--accent); opacity: 0; transition: opacity .15s var(--ease); pointer-events: none;
 }
 .window.is-focused::before { opacity: 1; }
+
+/* Resize grip (bottom-right): diagonal cursor and three small grip lines */
+.win-resize {
+  position: absolute; right: 0; bottom: 0; z-index: 2; width: 18px; height: 18px;
+  cursor: nwse-resize; touch-action: none;
+  background:
+    linear-gradient(135deg, transparent 0 45%, var(--line-strong) 45% 52%, transparent 52% 62%,
+      var(--line-strong) 62% 69%, transparent 69% 79%, var(--line-strong) 79% 86%, transparent 86%);
+  opacity: .8;
+}
+.win-resize:hover, .window.is-resizing .win-resize { opacity: 1; background-color: transparent; filter: brightness(1.4); }
+.window.is-resizing { user-select: none; }
+.window.is-max .win-resize { display: none; }
+
+/* Cursors for things that can't be used right now */
+.window.is-max .titlebar { cursor: not-allowed; } /* maximized: can't be dragged */
+.window.is-max .titlebar button { cursor: pointer; }
+:disabled, [aria-disabled="true"] { cursor: not-allowed; }
+.is-busy, .is-busy * { cursor: progress; }
 .window:not(.is-focused) .win-btn { opacity: .55; transition: opacity .15s var(--ease); }
 .window:not(.is-focused) .win-btn:hover { opacity: 1; }
 .no-motion .window, .no-motion .window::before, .no-motion .win-btn, .no-motion .title, .no-motion .title-icon { transition: none; }
@@ -538,6 +557,7 @@ img { max-width: 100%; }
     min-width: 0; border: 0; border-radius: 0; resize: none;
     animation: phone-in .25s var(--ease);
   }
+  .win-resize { display: none; }
   .window::before { display: none; } /* one full-screen window at a time: no focus line needed */
   @keyframes phone-in { from { transform: translateY(24px); opacity: 0; } }
   .titlebar { height: auto; min-height: 52px; padding: env(safe-area-inset-top) 12px 0 4px; cursor: default; }
