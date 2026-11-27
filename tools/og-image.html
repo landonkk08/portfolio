@@ -18,8 +18,7 @@
   }
   .brand { position: absolute; left: 72px; top: 64px; display: flex; align-items: center; gap: 14px;
     font-family: "JetBrains Mono", monospace; font-size: 22px; color: #8C98B0; }
-  .mark { width: 36px; height: 36px; border-radius: 10px; background: #FFB020; position: relative; }
-  .mark::after { content: ""; position: absolute; width: 40%; height: 40%; right: 18%; top: 18%; border-radius: 50%; background: #0B1220; }
+  .mark { width: 36px; height: 36px; display: block; }
   .text { position: absolute; left: 72px; bottom: 150px; width: 600px; }
   h1 { margin: 0; font-size: 92px; font-weight: 700; letter-spacing: -.045em; line-height: .95; }
   .role { margin: 22px 0 0; font-family: "JetBrains Mono", monospace; font-size: 26px; color: #FFB020; }
@@ -33,12 +32,17 @@
     font-family: "JetBrains Mono", monospace; font-size: 15px; color: #E6EAF2; }
   .bar i { width: 16px; height: 13px; border: 2px solid #FFB020; border-radius: 3px; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 20px; }
-  .tile { height: 150px; border-radius: 12px; border: 1px solid #24324D;
-    background: radial-gradient(circle at 75% 25%, var(--c), transparent 60%), #1B2640; }
+  /* Tiles use the same generated covers as the desktop (js/covers.js) */
+  .tile { position: relative; overflow: hidden; height: 150px; border-radius: 12px; border: 1px solid #24324D;
+    background:
+      radial-gradient(circle at 78% 22%, color-mix(in srgb, var(--c) 60%, transparent), transparent 55%),
+      radial-gradient(rgba(140, 152, 176, .16) 1px, transparent 1.5px) 0 0 / 14px 14px,
+      #1B2640; }
+  .cover-art { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--c); }
 </style>
 </head>
 <body>
-  <div class="brand"><span class="mark"></span><span id="os"></span></div>
+  <div class="brand"><img class="mark" src="../assets/favicon.svg" alt=""><span id="os"></span></div>
   <div class="text">
     <h1 id="name"></h1>
     <p class="role" id="role"></p>
@@ -46,16 +50,15 @@
   <div class="url" id="url"></div>
   <div class="win">
     <div class="bar"><i></i>Projects</div>
-    <div class="grid">
-      <div class="tile" style="--c: rgba(255,176,32,.7)"></div>
-      <div class="tile" style="--c: rgba(255,107,91,.7)"></div>
-      <div class="tile" style="--c: rgba(76,141,255,.7)"></div>
-      <div class="tile" style="--c: rgba(167,139,250,.7)"></div>
-    </div>
+    <div class="grid" id="tiles"></div>
   </div>
   <script src="../js/data.js"></script>
+  <script src="../js/covers.js"></script>
   <script>
     const D = window.PORTFOLIO;
+    // First four projects, so the preview shows real cover patterns.
+    document.getElementById("tiles").innerHTML = D.projects.slice(0, 4).map((p) =>
+      `<div class="tile" style="--c:${p.color || "#FFB020"}">${window.coverArt(p)}</div>`).join("");
     document.getElementById("os").textContent = D.osName;
     document.getElementById("name").textContent = D.owner.name;
     document.getElementById("role").textContent = D.owner.role;

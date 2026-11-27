@@ -101,8 +101,9 @@ Everything in this repo is public: anyone can read it on GitHub, and every visit
 
 ## Icons, link previews and the 404 page
 
-- **Favicon:** `assets/favicon.svg` (the OS logo), with PNG fallbacks `assets/favicon-32.png` and `assets/apple-touch-icon.png` for phone home screens.
-- **Link-preview image:** `assets/og-image.png` (1200×630), designed in `tools/og-image.html`. It shows your OS name, name, role and `siteUrl` from `js/data.js`.
+- **Favicon:** `assets/favicon.svg` (the Lantern OS logo), with PNG fallbacks `assets/favicon-32.png` and `assets/apple-touch-icon.png` for phone home screens.
+- **Logo on the site:** the boot screen, taskbar and 404 page draw the same lantern in CSS (`--lantern` in `css/styles.css`), so it follows the visitor's accent color. If you change the shape, update `assets/favicon.svg`, `tools/icon.html` and `--lantern` together.
+- **Link-preview image:** `assets/og-image.png` (1200×630), designed in `tools/og-image.html`. It shows your OS name, name, role and `siteUrl` from `js/data.js`, plus the generated covers of your first four projects.
 - **After changing your name, role or OS name**, regenerate the images (needs Microsoft Edge):
 
   ```powershell

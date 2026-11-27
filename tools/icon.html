@@ -1,30 +1,33 @@
 <!doctype html>
-<!-- Renders the OS logo for PNG icons. Used by tools/make-images.ps1.
+<!-- Renders the Lantern OS logo for PNG icons. Used by tools/make-images.ps1.
      ?size=N  pixel size of the icon (drawn at the top-left corner)
-     &full    square edge-to-edge tile (phones round the corners themselves) -->
+     &full    square edge-to-edge tile (phones round the corners themselves)
+     The shape matches assets/favicon.svg. -->
 <html>
 <head>
 <meta charset="utf-8">
 <style>
   html, body { margin: 0; background: transparent; overflow: hidden; }
-  .mark { position: absolute; left: 0; top: 0; background: #FFB020; border-radius: 28%; }
-  .full .mark { border-radius: 0; }
-  .mark::after {
-    content: ""; position: absolute; width: 40%; height: 40%;
-    right: 18%; top: 18%; border-radius: 50%; background: #0B1220;
-  }
-  .full .mark::after { width: 32%; height: 32%; right: 24%; top: 24%; }
+  svg { position: absolute; left: 0; top: 0; display: block; }
 </style>
 </head>
 <body>
-  <div class="mark"></div>
   <script>
     const q = new URLSearchParams(location.search);
-    const size = (parseInt(q.get("size"), 10) || 64) + "px";
-    const mark = document.querySelector(".mark");
-    mark.style.width = size;
-    mark.style.height = size;
-    if (q.has("full")) document.body.className = "full";
+    const size = parseInt(q.get("size"), 10) || 64;
+    const full = q.has("full");
+    // Edge-to-edge tiles get a slightly smaller glyph, since phones crop the corners.
+    const glyph = full ? 'transform="translate(6.4 6.4) scale(.8)"' : "";
+    document.body.innerHTML = `
+      <svg width="${size}" height="${size}" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="${full ? 0 : 18}" fill="#FFB020"/>
+        <g fill="#0B1220" ${glyph}>
+          <circle cx="32" cy="13" r="4.5" fill="none" stroke="#0B1220" stroke-width="3"/>
+          <path d="M22 21H42L39 16.5H25Z"/>
+          <path fill-rule="evenodd" d="M24 21H40A4 4 0 0 1 44 25V42A4 4 0 0 1 40 46H24A4 4 0 0 1 20 42V25A4 4 0 0 1 24 21ZM32 26C36 31 38 34 38 37.5A6 6 0 0 1 26 37.5C26 34 28 31 32 26Z"/>
+          <rect x="18" y="46" width="28" height="5" rx="2.5"/>
+        </g>
+      </svg>`;
   </script>
 </body>
 </html>

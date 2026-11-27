@@ -88,9 +88,15 @@ img { max-width: 100%; }
   width: 20px; height: 20px; border-radius: 6px;
   background: var(--accent); position: relative; flex-shrink: 0;
 }
+/* Lantern glyph, cut out of the tile so the flame shows the accent color.
+   Same shape as assets/favicon.svg. */
 .os-mark::after {
-  content: ""; position: absolute; width: 40%; height: 40%;
-  right: 18%; top: 18%; border-radius: 50%; background: var(--bg);
+  content: ""; position: absolute; inset: 0; background: var(--accent-ink);
+  -webkit-mask: var(--lantern) center / 100% 100% no-repeat;
+  mask: var(--lantern) center / 100% 100% no-repeat;
+}
+:root {
+  --lantern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='13' r='4.5' fill='none' stroke='black' stroke-width='3'/%3E%3Cpath d='M22 21H42L39 16.5H25Z'/%3E%3Cpath fill-rule='evenodd' d='M24 21H40A4 4 0 0 1 44 25V42A4 4 0 0 1 40 46H24A4 4 0 0 1 20 42V25A4 4 0 0 1 24 21ZM32 26C36 31 38 34 38 37.5A6 6 0 0 1 26 37.5C26 34 28 31 32 26Z'/%3E%3Crect x='18' y='46' width='28' height='5' rx='2.5'/%3E%3C/svg%3E");
 }
 .os-mark--lg { display: block; width: 56px; height: 56px; border-radius: 16px; margin: 0 auto 20px; }
 

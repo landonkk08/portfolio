@@ -1,4 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Lantern OS mark: a lantern with an amber flame, on an amber tile -->
   <rect width="64" height="64" rx="18" fill="#FFB020"/>
-  <circle cx="39.7" cy="24.3" r="12.8" fill="#0B1220"/>
+  <g fill="#0B1220">
+    <circle cx="32" cy="13" r="4.5" fill="none" stroke="#0B1220" stroke-width="3"/>
+    <path d="M22 21H42L39 16.5H25Z"/>
+    <path fill-rule="evenodd" d="M24 21H40A4 4 0 0 1 44 25V42A4 4 0 0 1 40 46H24A4 4 0 0 1 20 42V25A4 4 0 0 1 24 21ZM32 26C36 31 38 34 38 37.5A6 6 0 0 1 26 37.5C26 34 28 31 32 26Z"/>
+    <rect x="18" y="46" width="28" height="5" rx="2.5"/>
+  </g>
 </svg>
