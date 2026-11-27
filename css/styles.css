@@ -25,6 +25,8 @@
   --r-md: 10px;
   --r-lg: 14px;
   --shadow: 0 24px 60px -16px rgba(0, 0, 0, .65), 0 2px 8px rgba(0, 0, 0, .25);
+  --shadow-strong: 0 32px 80px -16px rgba(0, 0, 0, .8), 0 4px 14px rgba(0, 0, 0, .35);
+  --shadow-soft: 0 10px 28px -12px rgba(0, 0, 0, .5), 0 1px 4px rgba(0, 0, 0, .2);
   --taskbar-h: 52px;
   --ease: cubic-bezier(.2, .8, .2, 1);
   color-scheme: dark;
@@ -46,6 +48,8 @@
   --tag-bg: rgba(255, 255, 255, .75);
   --tag-line: rgba(11, 18, 32, .18);
   --shadow: 0 24px 60px -20px rgba(15, 30, 60, .28), 0 2px 8px rgba(15, 30, 60, .08);
+  --shadow-strong: 0 32px 80px -18px rgba(15, 30, 60, .38), 0 4px 14px rgba(15, 30, 60, .12);
+  --shadow-soft: 0 10px 28px -14px rgba(15, 30, 60, .2), 0 1px 4px rgba(15, 30, 60, .06);
   color-scheme: light;
 }
 
@@ -209,7 +213,18 @@ img { max-width: 100%; }
 .window { transform-origin: 0 0; }
 .window.anim-js { animation: none; } /* zoom animation is run from JS instead */
 .window:focus { outline: none; }
-.window.is-focused { border-color: var(--line-strong); }
+/* Depth: background windows sit lower (softer shadow, grey title bar);
+   the focused window gets a deeper shadow and an accent line along its top. */
+.window { box-shadow: var(--shadow-soft); transition: box-shadow .15s var(--ease), border-color .15s var(--ease); }
+.window.is-focused { border-color: var(--line-strong); box-shadow: var(--shadow-strong); }
+.window::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 1;
+  background: var(--accent); opacity: 0; transition: opacity .15s var(--ease); pointer-events: none;
+}
+.window.is-focused::before { opacity: 1; }
+.window:not(.is-focused) .win-btn { opacity: .55; transition: opacity .15s var(--ease); }
+.window:not(.is-focused) .win-btn:hover { opacity: 1; }
+.no-motion .window, .no-motion .window::before, .no-motion .win-btn, .no-motion .title, .no-motion .title-icon { transition: none; }
 .window[hidden] { display: none; }
 .window.is-max {
   left: 0 !important; top: 0 !important;
@@ -225,13 +240,14 @@ img { max-width: 100%; }
   cursor: grab; user-select: none; touch-action: none;
 }
 .titlebar:active { cursor: grabbing; }
-.title-icon { display: grid; color: var(--muted); }
+.title-icon { display: grid; color: var(--muted); transition: color .15s var(--ease); }
 .title-icon svg { width: 16px; height: 16px; }
 .window.is-focused .title-icon { color: var(--accent-text); }
 .title {
   flex: 1; min-width: 0;
   font-family: var(--font-mono); font-size: 12px; color: var(--muted);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color .15s var(--ease);
 }
 .window.is-focused .title { color: var(--text); }
 .win-btn {
@@ -490,6 +506,7 @@ img { max-width: 100%; }
     min-width: 0; border: 0; border-radius: 0; resize: none;
     animation: phone-in .25s var(--ease);
   }
+  .window::before { display: none; } /* one full-screen window at a time: no focus line needed */
   @keyframes phone-in { from { transform: translateY(24px); opacity: 0; } }
   .titlebar { height: auto; min-height: 52px; padding: env(safe-area-inset-top) 12px 0 4px; cursor: default; }
   .title-icon, .win-btn.min, .win-btn.max { display: none; }
